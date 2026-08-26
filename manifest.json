@@ -1,0 +1,13 @@
+{
+  "name": "Контент-Фабрика Дзен",
+  "short_name": "Дзен Фабрика",
+  "description": "Генератор контента для Дзен с Gemini AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1220",
+  "theme_color": "#6c5ce7",
+  "icons": [
+    { "src": "https://via.placeholder.com/192/6c5ce7/ffffff?text=ZF", "sizes": "192x192", "type": "image/png" },
+    { "src": "https://via.placeholder.com/512/6c5ce7/ffffff?text=ZF", "sizes": "512x512", "type": "image/png" }
+  ]
+}
