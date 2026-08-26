@@ -54,7 +54,7 @@ a{color:var(--a2)}
 <body>
 <div id="ls">⏳ Загрузка фабрики...</div>
 <div class="ct">
-<header><h1>🏭 Контент-Фабрика Дзен</h1><p>Yandex (Alice AI LLM/ART, YandexART 2.0, DeepSeek) + Gemini 3.6 + Pollinations + Kandinsky</p></header>
+<header><h1>🏭 Контент-Фабрика Дзен</h1><p>Yandex (Alice AI LLM/ART, YandexART 2.0, DeepSeek) + Gemini + Pollinations + Kandinsky</p></header>
 <div class="tabs">
 <div class="tb on" data-tab="dashboard">📊 Дашборд</div><div class="tb" data-tab="settings">⚙️ Настройки</div>
 <div class="tb" data-tab="ideas">💡 Идеи</div><div class="tb" data-tab="ai">🤖 AI Студия</div>
@@ -78,13 +78,13 @@ a{color:var(--a2)}
 </div>
 <div id="geminiTextSettings" style="display:none">
 <label>Gemini ключ</label><input type="password" id="apiKey" placeholder="AIza...">
-<label>Модель</label><select id="apiModel"><option value="gemini-3.6-flash">⚡ Gemini 3.6 Flash</option><option value="gemini-2.5-flash">2.5 Flash</option><option value="gemini-2.5-pro">2.5 Pro</option><option value="gemini-2.0-flash">2.0 Flash</option></select>
+<label>Модель</label><select id="apiModel"><option value="gemini-1.5-flash" selected>⚡ Gemini 1.5 Flash</option><option value="gemini-1.5-pro">1.5 Pro</option><option value="gemini-2.0-flash">2.0 Flash</option></select>
 </div>
 <hr style="border-color:var(--br);margin:16px 0">
 <h3>🖼 Картинки</h3>
-<select id="imageProvider"><option value="yandex">🔵 Yandex (Alice AI ART / YandexART 2.0)</option><option value="pollinations">🆓 Pollinations (Flux)</option><option value="gemini">🟢 Gemini 3.1 Flash Image</option><option value="huggingface">🤗 Hugging Face</option></select>
+<select id="imageProvider"><option value="yandex">🔵 Yandex (Alice AI ART / YandexART 2.0)</option><option value="pollinations">🆓 Pollinations (Flux)</option><option value="huggingface">🤗 Hugging Face</option></select>
 <div id="yandexImageSettings"><label>Модель</label><select id="yandexArtModel"><option value="aliceai-image-art-3.0">🎨 Alice AI ART (NEW)</option><option value="yandex-art-2.0">🖼 YandexART 2.0</option></select></div>
-<div id="geminiImageSettings" style="display:none"><label>Модель</label><select id="geminiImageModel"><option value="gemini-3.1-flash-image">🍌 Nano Banana 2</option><option value="gemini-3.1-flash-lite-image">⚡ Nano Banana 2 Lite</option></select></div>
+<div id="geminiImageSettings" style="display:none"><label>Модель</label><select id="geminiImageModel"><option value="imagen-3.0-generate-002">🎨 Imagen 3</option></select></div>
 <div id="hfImageSettings" style="display:none"><label>HF Token</label><input type="password" id="hfToken" placeholder="hf_..."><label>Модель</label><select id="hfModel"><option value="ai-forever/Kandinsky-3.1">Kandinsky 3.1</option><option value="black-forest-labs/FLUX.1-schnell">FLUX.1 Schnell</option></select></div>
 <div id="pollinationsInfo" style="display:none"><div class="ti">Pollinations: Flux + enhance, авто-перевод.</div></div>
 <div class="fl" style="margin-top:14px"><button class="b" data-action="saveSettings">💾 Сохранить</button><button class="b bg" data-action="testConnection">🔌 Проверить</button></div>
@@ -164,31 +164,135 @@ a{color:var(--a2)}
 <script>
 (function(){
 if(window.__ZF__)return;window.__ZF__=1;
-window.addEventListener('error',function(e){var l=document.getElementById('ls');if(l){l.className='';l.innerHTML='❌ '+e.message}});
+
 var K='zf13',mem={},ss={get:function(k){try{return localStorage.getItem(k)}catch(e){return mem[k]||null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=String(v)}}};
 var raw={};try{raw=JSON.parse(ss.get(K)||'{}')}catch(e){}
 var D=Object.assign({ideas:[],plan:[],checks:[],cs:{}},raw);
-D.s=Object.assign({tp:'yandex',gk:'',gm:'gemini-3.6-flash',yk:'',yf:'',ym:'aliceai-llm/latest',ya:'aliceai-image-art-3.0',ip:'yandex',gi:'gemini-3.1-flash-image',ht:'',hm:'ai-forever/Kandinsky-3.1'},raw.s||{});
+D.s=Object.assign({tp:'yandex',gk:'',gm:'gemini-1.5-flash',yk:'',yf:'',ym:'aliceai-llm/latest',ya:'aliceai-image-art-3.0',ip:'yandex',gi:'imagen-3.0-generate-002',ht:'',hm:'ai-forever/Kandinsky-3.1'},raw.s||{});
 var LI={},TG={},CA={};
 function $(i){return document.getElementById(i)}
 function es(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function ts(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2500)}
 function sv(){ss.set(K,JSON.stringify(D));ra()}
 var R='Правила Дзен: без кликбейта, заголовок=суть, уникальность, без 18+, короткие абзацы, вопрос в конце.';
-function gem(p){if(!D.s.gk)return Promise.reject(new Error('Нет Gemini ключа'));return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+(D.s.gm||'gemini-3.6-flash')+':generateContent?key='+encodeURIComponent(D.s.gk),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+((j.error&&j.error.message)||''))});return r.json()}).then(function(j){var t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(function(x){return x.text||''}).join('');if(!t)throw new Error('Пустой ответ');return t})}
-function yatxt(p){if(!D.s.yk||!D.s.yf)return Promise.reject(new Error('Yandex ключ или Folder ID не задан'));var m=D.s.ym||'aliceai-llm/latest';
-function direct(){if(m.indexOf('deepseek')===0||m.indexOf('qwen')===0){return fetch('https://ai.api.cloud.yandex.net/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+D.s.yk,'x-folder-id':D.s.yf},body:JSON.stringify({model:m,messages:[{role:'user',content:p}],max_tokens:2000,temperature:0.7})}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+((j.error&&j.error.message)||j.message||''))});return r.json()}).then(function(j){return (j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'Пустой ответ'})}return fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Api-Key '+D.s.yk,'x-folder-id':D.s.yf},body:JSON.stringify({modelUri:'gpt://'+D.s.yf+'/'+m,completionOptions:{stream:false,temperature:0.7,maxTokens:'2000'},messages:[{role:'user',text:p}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+(j.message||''))});return r.json()}).then(function(j){return (j.result&&j.result.alternatives&&j.result.alternatives[0]&&j.result.alternatives[0].message&&j.result.alternatives[0].message.text)||'Пустой ответ'})}
-function proxy(){return fetch('/api/yandex',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'text',key:D.s.yk,folder:D.s.yf,model:m,prompt:p})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);return j.text})}
-return direct().catch(function(e){if(e instanceof TypeError)return proxy();throw e})}
+
+function gem(p){
+    if(!D.s.gk)return Promise.reject(new Error('Нет Gemini ключа'));
+    var model = D.s.gm || 'gemini-1.5-flash';
+    return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+encodeURIComponent(D.s.gk),{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:p}]}]})
+    }).then(function(r){
+        if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+((j.error&&j.error.message)||''))});
+        return r.json();
+    }).then(function(j){
+        var t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(function(x){return x.text||''}).join('');
+        if(!t)throw new Error('Пустой ответ');
+        return t;
+    });
+}
+
+function yatxt(p){
+    if(!D.s.yk||!D.s.yf)return Promise.reject(new Error('Yandex ключ или Folder ID не задан'));
+    var m=D.s.ym||'aliceai-llm/latest';
+    
+    function direct(){
+        if(m.indexOf('deepseek')===0||m.indexOf('qwen')===0){
+            return fetch('https://ai.api.cloud.yandex.net/v1/chat/completions',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':'Bearer '+D.s.yk,'x-folder-id':D.s.yf},
+                body:JSON.stringify({model:m,messages:[{role:'user',content:p}],max_tokens:2000,temperature:0.7})
+            }).then(function(r){
+                if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+((j.error&&j.error.message)||j.message||''))});
+                return r.json();
+            }).then(function(j){return (j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'Пустой ответ'});
+        }
+        return fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Authorization':'Api-Key '+D.s.yk,'x-folder-id':D.s.yf},
+            body:JSON.stringify({modelUri:'gpt://'+D.s.yf+'/'+m,completionOptions:{stream:false,temperature:0.7,maxTokens:'2000'},messages:[{role:'user',text:p}]})
+        }).then(function(r){
+            if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+(j.message||''))});
+            return r.json();
+        }).then(function(j){return (j.result&&j.result.alternatives&&j.result.alternatives[0]&&j.result.alternatives[0].message&&j.result.alternatives[0].message.text)||'Пустой ответ'});
+    }
+    
+    function proxy(){
+        return fetch('/api/yandex',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({kind:'text',key:D.s.yk,folder:D.s.yf,model:m,prompt:p})
+        }).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);return j.text});
+    }
+
+    return direct().catch(function(e){if(e instanceof TypeError)return proxy();throw e});
+}
+
 function gt(p){return D.s.tp==='gemini'?gem(p):yatxt(p)}
-function yaimg(p){if(!D.s.yk||!D.s.yf)return Promise.reject(new Error('Yandex ключ или Folder ID не задан'));var u='art://'+D.s.yf+'/'+(D.s.ya||'aliceai-image-art-3.0');
-function pollOps(id,n){return new Promise(function(res){setTimeout(res,2000)}).then(function(){return fetch('https://llm.api.cloud.yandex.net/operations/'+id,{headers:{'Authorization':'Api-Key '+D.s.yk}})}).then(function(r){return r.json()}).then(function(op){if(op.done){var d=op.response&&op.response.image&&op.response.image.data;if(d)return{mime:'image/png',data:d};throw new Error('Без картинки')}if(op.error)throw new Error('YandexART: '+(op.error.message||''));if(n>=30)throw new Error('Таймаут');return pollOps(id,n+1)})}
-function direct(){return fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Api-Key '+D.s.yk,'x-folder-id':D.s.yf},body:JSON.stringify({modelUri:u,messages:[{text:p,weight:1}],generationOptions:{mimeType:'image/png'}})}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+(j.message||''))});return r.json()}).then(function(st){if(!st.id)throw new Error('Нет ID операции');return pollOps(st.id,0)})}
-function proxy(){return fetch('/api/yandex',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'image',key:D.s.yk,folder:D.s.yf,model:D.s.ya||'aliceai-image-art-3.0',prompt:p})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);return{mime:'image/png',data:j.data}})}
-return direct().catch(function(e){if(e instanceof TypeError)return proxy();throw e})}
+
+function yaimg(p){
+    if(!D.s.yk||!D.s.yf)return Promise.reject(new Error('Yandex ключ или Folder ID не задан'));
+    var u='art://'+D.s.yf+'/'+(D.s.ya||'aliceai-image-art-3.0');
+    
+    function pollOps(id,n){
+        return new Promise(function(res){setTimeout(res,2000)}).then(function(){
+            return fetch('https://llm.api.cloud.yandex.net/operations/'+id,{headers:{'Authorization':'Api-Key '+D.s.yk}})
+        }).then(function(r){return r.json()}).then(function(op){
+            if(op.done){
+                var d=op.response&&op.response.image&&op.response.image.data;
+                if(d)return{mime:'image/png',data:d};
+                throw new Error('Без картинки');
+            }
+            if(op.error)throw new Error('YandexART: '+(op.error.message||''));
+            if(n>=30)throw new Error('Таймаут');
+            return pollOps(id,n+1);
+        });
+    }
+    
+    function direct(){
+        return fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Authorization':'Api-Key '+D.s.yk,'x-folder-id':D.s.yf},
+            body:JSON.stringify({modelUri:u,messages:[{text:p,weight:1}],generationOptions:{mimeType:'image/png'}})
+        }).then(function(r){
+            if(!r.ok)return r.json().then(function(j){throw new Error('HTTP '+r.status+': '+(j.message||''))});
+            return r.json();
+        }).then(function(st){if(!st.id)throw new Error('Нет ID операции');return pollOps(st.id,0)});
+    }
+    
+    function proxy(){
+        return fetch('/api/yandex',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({kind:'image',key:D.s.yk,folder:D.s.yf,model:D.s.ya||'aliceai-image-art-3.0',prompt:p})
+        }).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);return{mime:'image/png',data:j.data}});
+    }
+
+    return direct().catch(function(e){if(e instanceof TypeError)return proxy();throw e});
+}
+
 function b2d(b){return new Promise(function(res,rej){var f=new FileReader();f.onloadend=function(){res({mime:b.type||'image/png',data:f.result.split(',')[1]})};f.onerror=rej;f.readAsDataURL(b)})}
 function tr(t){if(D.s.ip==='yandex'||!D.s.gk)return Promise.resolve(t);return gem('Translate to English for image generation. Text: "'+t+'". Only translation.').catch(function(){return t})}
-function gim(p){var pr=D.s.ip||'yandex';if(pr==='yandex')return yaimg(p);if(pr==='pollinations'){return tr(p).then(function(en){return fetch('https://image.pollinations.ai/prompt/'+encodeURIComponent('High quality, '+en)+'?model=flux&width=1024&height=576&nologo=true&seed='+Math.floor(Math.random()*100000)+'&enhance=true')}).then(function(r){if(!r.ok)throw new Error('Pollinations '+r.status);return r.blob()}).then(b2d)}if(pr==='huggingface'){if(!D.s.ht)return Promise.reject(new Error('Нет HF токена'));var md=D.s.hm||'ai-forever/Kandinsky-3.1';return tr(p).then(function(en){return fetch('https://api-inference.huggingface.co/models/'+md,{method:'POST',headers:{'Authorization':'Bearer '+D.s.ht,'Content-Type':'application/json'},body:JSON.stringify({inputs:en})})}).then(function(r){if(!r.ok)throw new Error('HF '+r.status);return r.blob()}).then(b2d)}if(!D.s.gk)return Promise.reject(new Error('Нет Gemini ключа'));return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+(D.s.gi||'gemini-3.1-flash-image')+':generateContent?key='+encodeURIComponent(D.s.gk),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}],generationConfig:{responseModalities:['IMAGE','TEXT']}})}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(function(j){var ps=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]);for(var i=0;i<ps.length;i++){if(ps[i].inlineData&&ps[i].inlineData.data)return{mime:ps[i].inlineData.mimeType||'image/png',data:ps[i].inlineData.data}}throw new Error('Gemini без картинки')})}
+
+function gim(p){
+    var pr=D.s.ip||'yandex';
+    if(pr==='yandex')return yaimg(p);
+    if(pr==='pollinations'){
+        return tr(p).then(function(en){
+            return fetch('https://image.pollinations.ai/prompt/'+encodeURIComponent('High quality, '+en)+'?model=flux&width=1024&height=576&nologo=true&seed='+Math.floor(Math.random()*100000)+'&enhance=true');
+        }).then(function(r){if(!r.ok)throw new Error('Pollinations '+r.status);return r.blob()}).then(b2d);
+    }
+    if(pr==='huggingface'){
+        if(!D.s.ht)return Promise.reject(new Error('Нет HF токена'));
+        var md=D.s.hm||'ai-forever/Kandinsky-3.1';
+        return tr(p).then(function(en){
+            return fetch('https://api-inference.huggingface.co/models/'+md,{method:'POST',headers:{'Authorization':'Bearer '+D.s.ht,'Content-Type':'application/json'},body:JSON.stringify({inputs:en})});
+        }).then(function(r){if(!r.ok)throw new Error('HF '+r.status);return r.blob()}).then(b2d);
+    }
+    return Promise.reject(new Error('Выбран недоступный провайдер'));
+}
+
 function sl(id,m){$(id).innerHTML='<div class="ld">⏳ '+(m||'...')+'</div>'}
 function se(id,e){$(id).innerHTML='<div class="bx"><span class="bd2 bad">'+es(e.message)+'</span></div>'}
 function sr(id,t){$(id).innerHTML='<div class="bx">'+es(t)+'</div>'}
@@ -197,6 +301,7 @@ function ril(id,t){TG[id]=t;$(id).innerHTML=t.map(function(x,i){return '<div cla
 function ap(ti,to,v,tn){return ['Ты — топовый автор Дзен. Напиши готовую статью.','Заголовок H1: "'+(ti||'(придумай честный до 70 знаков)')+'"','Тема: '+(to||ti),'Объём: '+v,'Тон: '+tn,R,'','СТРУКТУРА ОТВЕТА:','1) [DESCRIPTION]...[/DESCRIPTION] — анонс 2-3 предл.','2) [TAGS]...[/TAGS] — 8 тегов через запятую.','3) Чистый HTML: <h1>заголовок</h1>, <p class="meta">время чтения</p>, крючок <p>, 3 раздела <h2> с <p> и <h3>, список <ul><li>, <blockquote>, <h2>Итог</h2>, <p><b>Вопрос к читателям:</b> ...</p>, <p><i>Подписывайтесь — дальше разберём [анонс].</i></p>','','Живой язык, короткие абзацы, конкретика, без канцелярита и кликбейта. Верни ТОЛЬКО блоки и HTML.'].join('\n')}
 function par(r){var d='',t='',h=r;var dm=r.match(/\[DESCRIPTION\]([\s\S]*?)\[\/DESCRIPTION\]/i);var tm=r.match(/\[TAGS\]([\s\S]*?)\[\/TAGS\]/i);if(dm)d=dm[1].trim();if(tm)t=tm[1].trim();h=h.replace(/\[DESCRIPTION\][\s\S]*?\[\/DESCRIPTION\]/gi,'').replace(/\[TAGS\][\s\S]*?\[\/TAGS\]/gi,'').trim();var h1=h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);var ti=h1?h1[1].replace(/<[^>]+>/g,'').trim():'';var md=h.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi,'# $1\n\n').replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi,'## $1\n\n').replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi,'### $1\n\n').replace(/<li[^>]*>([\s\S]*?)<\/li>/gi,'- $1\n').replace(/<p[^>]*>([\s\S]*?)<\/p>/gi,'$1\n\n').replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi,'> $1\n\n').replace(/<b[^>]*>([\s\S]*?)<\/b>/gi,'**$1**').replace(/<i[^>]*>([\s\S]*?)<\/i>/gi,'*$1*').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/\n{3,}/g,'\n\n').trim();var pn=md.replace(/^#+\s+/gm,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^>\s*/gm,'').replace(/^- /gm,'').trim();return{html:h,md:md,plain:pn,title:ti,description:d,tags:t}}
 function ra2(a){CA=a;$('articleTabs').style.display='flex';$('articleActions').style.display='flex';$('aiArticleResult').style.display='none';$('articlePreview').innerHTML='<div class="ap">'+(a.description?'<p class="mt"><b>Описание:</b> '+es(a.description)+'</p>':'')+a.html+(a.tags?'<p class="tg"><b>Теги:</b> '+es(a.tags)+'</p>':'')+'</div>';$('articleHtmlCode').textContent=a.html;$('articleMdCode').textContent=a.md;$('articlePlainCode').textContent=a.plain}
+
 function aiIdeas(){if(!(D.s.gk||D.s.yk)){ts('Нужен ключ');switchTab('settings');return}sl('aiIdeasResult');gt('10 честных заголовков для Дзен. Ниша: '+$('aiNiche').value+'. '+R).then(function(r){ril('aiIdeasResult',pl(r))}).catch(function(e){se('aiIdeasResult',e)})}
 function aiTitles(){var t=$('aiTitleTopic').value.trim();if(!t){ts('Тема?');return}sl('aiTitlesResult');gt('7 заголовков: '+t+'. '+R).then(function(r){sr('aiTitlesResult',r)}).catch(function(e){se('aiTitlesResult',e)})}
 function aiDesc(){var t=$('descTopic').value.trim();if(!t){ts('Тема?');return}sl('aiDescResult');gt('Анонс 2-3 предл: '+t+'. '+R).then(function(r){sr('aiDescResult',r)}).catch(function(e){se('aiDescResult',e)})}
@@ -212,16 +317,41 @@ function fb(t){var a=document.createElement('textarea');a.value=t;document.body.
 function copyArticleHtml(){if(!CA.html){ts('Нет статьи');return}ct(CA.html);ts('📋 HTML — вставляй в Дзен')}
 function copyArticleMd(){if(!CA.md){ts('Нет статьи');return}ct(CA.md)}
 function copyArticlePlain(){if(!CA.plain){ts('Нет статьи');return}ct(CA.plain)}
+
 var aiP=[{re:/в современном мире|важно отметить|является|осуществляется|в заключение|таким образом/i,msg:'Канцелярит'},{re:/безусловно|несомненно|очевидно/i,msg:'Усилители'}];
 var hci=['Личный опыт','Цифры/факты','Нет канцелярита','Эмоция','Разная длина предложений','Вопрос читателю','Личная деталь','Уникальность >90%'];
 function rhc(){$('humanChecklist').innerHTML=hci.map(function(it,i){return '<div class="ci"><input type="checkbox" id="hchk_'+i+'"><label for="hchk_'+i+'">'+it+'</label></div>'}).join('');$('humanChecklist').querySelectorAll('input').forEach(function(cb){cb.addEventListener('change',uhp)})}
 function uhp(){var d=document.querySelectorAll('#humanChecklist input:checked').length;$('humanProgress').style.width=(d/hci.length*100)+'%'}
 function analyzeHuman(){var t=$('humanText').value;if(!t.trim()){ts('Текст?');return}var f=[];aiP.forEach(function(p){if(new RegExp(p.re.source,'gi').test(t))f.push(p.msg)});var hp=/\bя\b|\bмы\b/i.test(t),hn=/\d/.test(t),hq=/\?/.test(t);$('humanResult').innerHTML='<div class="bx"><h3>🔍 Паттерны</h3>'+(f.length?f.map(function(x){return '<span class="bd2 bad">'+x+'</span>'}).join(' '):'<span class="bd2 ok">✅ Чисто</span>')+'<h3>📊 Метрики</h3><div>Местоимение: '+(hp?'<span class="bd2 ok">Есть</span>':'<span class="bd2 bad">Нет</span>')+'</div><div>Цифры: '+(hn?'<span class="bd2 ok">Есть</span>':'<span class="bd2 wn">Мало</span>')+'</div><div>Вопрос: '+(hq?'<span class="bd2 ok">Есть</span>':'<span class="bd2 wn">Нет</span>')+'</div></div>'}
 function rewriteHuman(){var t=$('humanText').value;if(!t.trim()){ts('Текст?');return}sl('humanResult','Очеловечиваю...');gt('Перепиши живо, добавь опыт, убери канцелярит: """'+t+'"""').then(function(r){sr('humanResult',r)}).catch(function(e){se('humanResult',e)})}
-function saveSettings(){D.s.tp=$('textProvider').value;D.s.gk=$('apiKey').value.trim();D.s.gm=$('apiModel').value||'gemini-3.6-flash';D.s.yk=$('yandexApiKey').value.trim();D.s.yf=$('yandexFolderId').value.trim();D.s.ym=$('yandexModel').value;D.s.ya=$('yandexArtModel').value;D.s.ip=$('imageProvider').value;D.s.gi=$('geminiImageModel').value;D.s.ht=$('hfToken').value.trim();D.s.hm=$('hfModel').value;sv();ts('Сохранено')}
-function testConnection(){saveSettings();if(!(D.s.gk||D.s.yk)){ts('Введи ключ');return}var st=$('connStatus');st.innerHTML='<span class="bd2 inf">Проверяю...</span>';gt('Ответь одним словом: работает').then(function(r){st.innerHTML='<span class="bd2 ok">✅ '+es(r)+'</span>'}).catch(function(e){st.innerHTML='<span class="bd2 bad">❌ '+es(e.message)+'</span>'})}
+
+function saveSettings(){
+    D.s.tp=$('textProvider').value;
+    D.s.gk=$('apiKey').value.trim();
+    D.s.gm=$('apiModel').value||'gemini-1.5-flash';
+    D.s.yk=$('yandexApiKey').value.trim();
+    D.s.yf=$('yandexFolderId').value.trim();
+    D.s.ym=$('yandexModel').value;
+    D.s.ya=$('yandexArtModel').value;
+    D.s.ip=$('imageProvider').value;
+    D.s.gi=$('geminiImageModel').value;
+    D.s.ht=$('hfToken').value.trim();
+    D.s.hm=$('hfModel').value;
+    sv();
+    ts('Сохранено');
+}
+
+function testConnection(){
+    saveSettings();
+    if(!(D.s.gk||D.s.yk)){ts('Введи ключ');return}
+    var st=$('connStatus');
+    st.innerHTML='<span class="bd2 inf">Проверяю...</span>';
+    gt('Ответь одним словом: работает').then(function(r){st.innerHTML='<span class="bd2 ok">✅ '+es(r)+'</span>'}).catch(function(e){st.innerHTML='<span class="bd2 bad">❌ '+es(e.message)+'</span>'});
+}
+
 $('textProvider').addEventListener('change',function(){var v=this.value;$('geminiTextSettings').style.display=v==='gemini'?'block':'none';$('yandexTextSettings').style.display=v==='yandex'?'block':'none'});
 $('imageProvider').addEventListener('change',function(){var v=this.value;$('geminiImageSettings').style.display=v==='gemini'?'block':'none';$('hfImageSettings').style.display=v==='huggingface'?'block':'none';$('pollinationsInfo').style.display=v==='pollinations'?'block':'none';$('yandexImageSettings').style.display=v==='yandex'?'block':'none'});
+
 var ideaDB={cooking:{howto:['Готовим дома','Рецепт за 30 мин'],list:['7 ужинов','5 блюд из холодильника'],story:['Месяц готовил','Научился печь'],compare:['Дорогой vs дешёвый','Дом vs магазин'],mistakes:['5 ошибок','Тесто не поднимается']},home:{howto:['Ремонт сам','Утепление балкона'],list:['7 лайфхаков','5 ошибок покупки'],story:['Год после ремонта','Собрал мебель'],compare:['Краска: дорогая vs дешёвая','Сам vs мастер'],mistakes:['5 ошибок ремонта','Переплатил']},garden:{howto:['Урожай раньше','Посадка по шагам'],list:['7 растений','5 ошибок дачника'],story:['Участок в сад','Борьба с вредителем'],compare:['Теплица vs парник','Грунт: дорогой vs дешёвый'],mistakes:['4 ошибки новичка','Не плодоносит']},tech:{howto:['Настройка 15 мин','Ускорение гаджета'],list:['5 бесплатных программ','7 скрытых функций'],story:['Перешёл с А на Б','Восстановил данные'],compare:['Гаджет А vs Б','Бюджет vs флагман'],mistakes:['5 ошибок покупки','Тормозит']},finance:{howto:['Личный бюджет','Кэшбэк'],list:['5 привычек экономии','7 способов сократить'],story:['Год откладывал 10%','Выбрался из кредитки'],compare:['Вклад vs накопительный','Банк А vs Б'],mistakes:['5 фин.ошибок','Копилка пуста']},travel:{howto:['План поездки','Бюджетно'],list:['7 неочевидных мест','5 способов сэкономить'],story:['Поездка с цифрами','С детьми'],compare:['Место А vs Б','Сам vs тур'],mistakes:['Что пошло не так','5 ошибок первой поездки']},history:{howto:['Что если бы','Быт эпохи'],list:['7 мифов','5 фактов'],story:['Месяц изучал','Проверил миф'],compare:['Личность А vs Б','Эпоха А vs Б'],mistakes:['5 заблуждений','Учебник врёт']}};
 function genManualIdeas(){var n=$('mNiche').value,f=$('mFormat').value;ril('manualIdeasResult',(ideaDB[n]&&ideaDB[n][f])||['Нет'])}
 function addToBank(t){if(!t||D.ideas.find(function(i){return i.title===t}))return;D.ideas.push({title:t,date:new Date().toLocaleDateString('ru')});sv()}
@@ -238,6 +368,7 @@ function scanText(){var t=$('textScan').value;if(!t.trim())return;var f=[];[{re:
 function buildStructure(){var t=$('bTitle').value.trim(),to=$('bTopic').value.trim()||'тема';var r=[];var tt=t||'Введи';if(tt.length<15)r.push({type:'wn',msg:'Короткий'});[{re:/шок|не поверите|\.\.\.|[А-ЯЁ]{4,}/i,msg:'Кликбейт'},{re:/^.{70,}$/,msg:'>70'}].forEach(function(p){if(p.re.test(tt))r.push({type:'bad',msg:p.msg})});if(!r.length)r.push({type:'ok',msg:'OK'});$('titleCheck').innerHTML=r.map(function(x){return '<span class="bd2 '+x.type+'">'+x.msg+'</span>'}).join(' ');$('structureResult').innerHTML='<div class="bx">📌 '+es(t||'(введи)')+'\nТема: '+es(to)+'\n\n1️⃣ Крючок\n2️⃣ Контекст\n3️⃣ 3-5 блоков\n4️⃣ Цифры\n5️⃣ Итог\n6️⃣ Вопрос</div>'}
 var tpl=['ИНСТРУКЦИЯ\n🪝 Крючок\n📦 Понадобится\n📝 Шаги\n⚠️ Ошибки\n✅ Итог\n💬 Вопрос','ПОДБОРКА\nВведение\n1-5 пунктов\n📊 Сравнение\nВывод','ОПЫТ\n📖 Ситуация\n🤔 Пробовал\n💡 Решение\n Результат\n💬 Вопрос','РАЗБОР\nЧто разбираю\n✅ Плюсы\n❌ Минусы\n⚖️ Сравнение\n🎯 Итог'];
 function switchTab(n){document.querySelectorAll('.tb').forEach(function(x){x.classList.toggle('on',x.dataset.tab===n)});document.querySelectorAll('.sec').forEach(function(x){x.classList.toggle('on',x.id===n)})}
+
 document.addEventListener('click',function(e){
 var tab=e.target.closest('[data-tab]');if(tab){switchTab(tab.dataset.tab);return}
 var st=e.target.closest('.st');if(st){document.querySelectorAll('.st').forEach(function(x){x.classList.remove('on')});document.querySelectorAll('.src').forEach(function(x){x.classList.remove('on')});st.classList.add('on');var mp={preview:'articlePreview',html:'articleHtml',md:'articleMd',plain:'articlePlain'};$(mp[st.dataset.source]).classList.add('on');return}
@@ -272,19 +403,31 @@ else if(a==='addPlan')addPlan();
 else if(a==='removePlan'){D.plan.splice(idx,1);sv()}
 else if(a==='copyTemplate')ct(tpl[idx]);
 });
+
 document.addEventListener('change',function(e){if(e.target.matches('[data-plan-status]')){D.plan[parseInt(e.target.dataset.index,10)].status=e.target.value;sv()}});
+
 function ra(){
 $('statIdeas').textContent=D.ideas.length;$('statPlan').textContent=D.plan.length;$('statDone').textContent=D.plan.filter(function(p){return p.status==='done'}).length;$('statChecks').textContent=D.checks.length;
 rib();rpl();
 $('keyBanner').innerHTML=(D.s.gk||D.s.yk)?'':'<div class="ti dt">⚠️ API ключ не задан. Вставь в настройках.</div>';
 var tp=$('textProvider');if(tp){tp.value=D.s.tp||'yandex';tp.dispatchEvent(new Event('change'))}
 var ip=$('imageProvider');if(ip){ip.value=D.s.ip||'yandex';ip.dispatchEvent(new Event('change'))}
-var els={apiKey:D.s.gk||'',apiModel:D.s.gm||'gemini-3.6-flash',yandexApiKey:D.s.yk||'',yandexFolderId:D.s.yf||'',yandexModel:D.s.ym||'aliceai-llm/latest',yandexArtModel:D.s.ya||'aliceai-image-art-3.0',geminiImageModel:D.s.gi||'gemini-3.1-flash-image',hfToken:D.s.ht||'',hfModel:D.s.hm||'ai-forever/Kandinsky-3.1'};
+var els={apiKey:D.s.gk||'',apiModel:D.s.gm||'gemini-1.5-flash',yandexApiKey:D.s.yk||'',yandexFolderId:D.s.yf||'',yandexModel:D.s.ym||'aliceai-llm/latest',yandexArtModel:D.s.ya||'aliceai-image-art-3.0',geminiImageModel:D.s.gi||'imagen-3.0-generate-002',hfToken:D.s.ht||'',hfModel:D.s.hm||'ai-forever/Kandinsky-3.1'};
 for(var id in els){var el=$(id);if(el)el.value=els[id]}
 }
-window.addEventListener('DOMContentLoaded',function(){$('ls').className='h'});
-setTimeout(function(){var l=$('ls');if(l&&l.className!=='h')l.innerHTML='❌ Откройте через HTTP (не file://)'},3000);
-rcl();rhc();ra();
+
+function init(){
+    var l=$('ls');
+    if(l) l.className='h';
+    rcl();rhc();ra();
+}
+
+if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init);
+} else {
+    init();
+}
+
 })();
 </script>
 </body>
