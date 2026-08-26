@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контент-Фабрика Дзен + AI</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6c5ce7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+  :root{--bg:#0f1220;--panel:#181c30;--panel2:#1f2440;--text:#eef1ff;--muted:#9aa3c7;--accent:#6c5ce7;--accent2:#00cec9;--ok:#2ecc71;--warn:#f39c12;--bad:#e74c3c;--border:#2a3050;--radius:14px}
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+  body{background:var(--bg);color:var(--text);min-height:100vh}
+  .container{max-width:1200px;margin:0 auto;padding:20px}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:26px;border-radius:var(--radius);margin-bottom:20px;text-align:center}
+  header h1{font-size:1.8rem;margin-bottom:6px}header p{opacity:.9}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .tab{padding:10px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;color:var(--muted);user-select:none}
+  .tab:hover{transform:translateY(-2px)}.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px}
+  .panel h2{margin-bottom:14px;font-size:1.25rem}.panel h3{margin:16px 0 10px;color:var(--accent2)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .card{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:18px}.card h4{margin-bottom:10px;color:var(--accent2)}
+  input[type=text],input[type=password],input[type=date],select,textarea{width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);margin-bottom:12px}
+  textarea{min-height:100px;resize:vertical}label{display:block;margin-bottom:6px;color:var(--muted);font-size:.9rem}
+  .btn{padding:12px 22px;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(108,92,231,.4)}.btn-sm{padding:8px 15px;font-size:.85rem}.btn-danger{background:var(--bad)}.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .section{display:none}.section.active{display:block;animation:fade .3s}@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.8rem;margin:2px}.badge-ok{background:rgba(46,204,113,.2);color:var(--ok)}.badge-warn{background:rgba(243,156,18,.2);color:var(--warn)}.badge-bad{background:rgba(231,76,60,.2);color:var(--bad)}.badge-info{background:rgba(0,206,201,.2);color:var(--accent2)}
+  .check-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--panel2);border-radius:8px;margin-bottom:8px}.check-item input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--accent)}.check-item label{margin:0;flex:1;color:var(--text)}
+  .stat{text-align:center}.stat .num{font-size:2.4rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .plan-item{display:flex;justify-content:space-between;align-items:center;padding:13px;background:var(--panel2);border-radius:8px;margin-bottom:8px;gap:12px}.plan-item .meta{flex:1}.plan-item .title{font-weight:600}.plan-item .sub{color:var(--muted);font-size:.85rem}
+  .result-box{background:var(--bg);border-left:4px solid var(--accent2);padding:16px;border-radius:8px;margin-top:12px;white-space:pre-wrap;line-height:1.6;overflow-x:auto}.ai-text{max-height:500px;overflow-y:auto}
+  .tip{background:rgba(0,206,201,.1);border-left:4px solid var(--accent2);padding:12px;border-radius:8px;margin:10px 0;font-size:.9rem}.danger-tip{background:rgba(231,76,60,.1);border-left:4px solid var(--bad)}
+  .flex{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.progress-bar{height:10px;background:var(--bg);border-radius:5px;overflow:hidden;margin:8px 0}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.4s}
+  .loading{color:var(--accent2);padding:10px;font-style:italic}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent2);color:var(--text);padding:12px 22px;border-radius:10px;z-index:99;animation:fade .3s;box-shadow:0 5px 20px rgba(0,0,0,.4)}
+  a{color:var(--accent2)}#loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;color:var(--text);font-size:1.2rem}#loading-screen.hidden{display:none}
+  @media(max-width:700px){.plan-item{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div id="loading-screen">⏳ Загрузка фабрики...</div>
+<div class="container">
+<header><h1>🏭 Контент-Фабрика Дзен</h1><p>Gemini AI + Мульти-генератор картинок (Gemini 3.1 / Pollinations Flux / Kandinsky)</p></header>
+<div class="tabs">
+  <div class="tab active" data-tab="dashboard">📊 Дашборд</div><div class="tab" data-tab="settings">⚙️ Настройки</div>
+  <div class="tab" data-tab="ideas">💡 Идеи</div><div class="tab" data-tab="ai">🤖 AI Студия</div>
+  <div class="tab" data-tab="images">🖼 Картинки</div><div class="tab" data-tab="human">🧬 Человечность</div>
+  <div class="tab" data-tab="builder">🛠 Конструктор</div><div class="tab" data-tab="checker">✅ Проверка</div>
+  <div class="tab" data-tab="plan">📅 План</div><div class="tab" data-tab="templates">📄 Шаблоны</div>
+</div>
+
+<!-- НАСТРОЙКИ -->
+<div class="section" id="settings"><div class="panel"><h2>⚙️ Подключение API</h2>
+  <div class="tip">1. <b>Gemini:</b> <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a><br>2. <b>Hugging Face:</b> <a href="https://huggingface.co/settings/tokens" target="_blank">hf.co/settings/tokens</a><br>3. <b>Pollinations:</b> без ключа, бесплатно</div>
+  <label>Gemini API ключ</label><input type="password" id="apiKey" placeholder="AIza...">
+  <label>Модель текста</label><input type="text" id="apiModel" list="models" value="gemini-2.0-flash">
+  <datalist id="models"><option value="gemini-2.0-flash"><option value="gemini-2.5-flash"><option value="gemini-2.5-pro"></datalist>
+  <hr style="border-color:var(--border);margin:20px 0"><h3>🖼 Генерация картинок</h3>
+  <label>Провайдер</label><select id="imageProvider"><option value="pollinations">🆓 Pollinations.ai (Flux, бесплатно)</option><option value="gemini">🟢 Gemini 3.1 Flash Image</option><option value="huggingface">🤗 Hugging Face (Kandinsky/Flux)</option></select>
+  <div id="geminiImageSettings" style="display:none"><label>Модель Gemini</label><select id="geminiImageModel"><option value="gemini-3.1-flash-image">🍌 Nano Banana 2 (3.1 Flash)</option><option value="gemini-3.1-flash-lite-image">⚡ Nano Banana 2 Lite</option></select><div class="tip" style="font-size:.8rem">Старые 2.5/2.0 preview отключены Google. Используй 3.1.x.</div></div>
+  <div id="hfImageSettings" style="display:none"><label>HF Token</label><input type="password" id="hfToken" placeholder="hf_..."><label>Модель HF</label><select id="hfModel"><option value="ai-forever/Kandinsky-3.1">Kandinsky 3.1</option><option value="black-forest-labs/FLUX.1-schnell">FLUX.1 Schnell</option></select></div>
+  <div id="pollinationsInfo"><div class="tip">Pollinations с моделью Flux + enhance=true. Авто-перевод промпта на английский для точности.</div></div>
+  <div class="flex" style="margin-top:16px"><button class="btn" data-action="saveSettings">💾 Сохранить</button><button class="btn btn-ghost" data-action="testConnection">🔌 Проверить Gemini</button></div>
+  <div id="connStatus" style="margin-top:12px"></div>
+</div></div>
+
+<!-- ДАШБОРД -->
+<div class="section active" id="dashboard"><div id="keyBanner"></div>
+  <div class="panel"><h2>📊 Обзор</h2><div class="grid"><div class="card stat"><div class="num" id="statIdeas">0</div>Идей</div><div class="card stat"><div class="num" id="statPlan">0</div>В плане</div><div class="card stat"><div class="num" id="statDone">0</div>Опубликовано</div><div class="card stat"><div class="num" id="statChecks">0</div>Проверок</div></div></div>
+  <div class="panel"><h2>⚠️ Правила Дзен</h2><div class="grid"><div class="card"><h4>🚫 Запрещено</h4><p style="color:var(--muted)">Кликбейт • Шок • Плагиат • 18+</p></div><div class="card"><h4>✅ Качество</h4><p style="color:var(--muted)">Уникальность • 3+ фото • Польза</p></div><div class="card"><h4>💰 Монетизация</h4><p style="color:var(--muted)">30 мин дочитываний • Регулярность</p></div><div class="card"><h4>🔍 Осторожно</h4><p style="color:var(--muted)">Медицина • Финансы • Политика</p></div></div></div>
+</div>
+
+<!-- ИДЕИ -->
+<div class="section" id="ideas"><div class="panel"><h2>💡 Генератор идей</h2>
+  <div class="flex"><div style="flex:1"><label>Ниша</label><select id="mNiche"><option value="cooking">🍳 Кулинария</option><option value="home">🏠 Дом</option><option value="garden">🌱 Сад</option><option value="tech">💻 Тех</option><option value="finance">💰 Финансы</option><option value="health">❤️ Здоровье</option><option value="travel">✈️ Путешествия</option><option value="history">🏛 История</option></select></div>
+  <div style="flex:1"><label>Формат</label><select id="mFormat"><option value="howto">Инструкция</option><option value="list">Подборка</option><option value="story">Опыт</option><option value="compare">Сравнение</option><option value="mistakes">Ошибки</option></select></div>
+  <button class="btn" data-action="genManualIdeas" style="align-self:flex-end">Сгенерировать</button></div><div id="manualIdeasResult"></div></div>
+  <div class="panel"><h2>🗂 Банк идей</h2><div class="flex"><input type="text" id="manualIdea" placeholder="Своя идея..." style="flex:1;margin:0"><button class="btn btn-sm" data-action="addIdeaManual">+</button></div><div id="ideasBank" style="margin-top:16px"></div></div>
+</div>
+
+<!-- AI СТУДИЯ -->
+<div class="section" id="ai"><div class="panel"><h2>🤖 AI Студия</h2><div class="tip">Промпты содержат правила Дзен.</div></div>
+  <div class="grid">
+    <div class="card"><h4>💡 10 заголовков</h4><input type="text" id="aiNiche" placeholder="Ниша"><input type="text" id="aiIdeasExtra" placeholder="Пожелания"><button class="btn btn-sm" data-action="aiIdeas">✨</button><div id="aiIdeasResult"></div></div>
+    <div class="card"><h4>🎯 Варианты</h4><input type="text" id="aiTitleTopic" placeholder="Тема"><button class="btn btn-sm" data-action="aiTitles">✨ 7</button><div id="aiTitlesResult"></div></div>
+    <div class="card"><h4>📝 Анонс</h4><input type="text" id="descTopic" placeholder="Тема"><button class="btn btn-sm" data-action="aiDesc">✨</button><div id="aiDescResult"></div></div>
+    <div class="card"><h4>#️⃣ Теги</h4><input type="text" id="tagsTopic" placeholder="Тема"><button class="btn btn-sm" data-action="aiTags">✨</button><div id="aiTagsResult"></div></div>
+    <div class="card"><h4>🛡 Проверка</h4><textarea id="aiCheckText" placeholder="Текст..."></textarea><button class="btn btn-sm" data-action="aiCheck">✨</button><div id="aiCheckResult"></div></div>
+  </div>
+  <div class="panel" style="margin-top:20px"><h2>✍️ Статья</h2><div class="grid"><div><input type="text" id="artTitle" placeholder="Заголовок"><input type="text" id="artTopic" placeholder="Тема"><select id="artVolume"><option>короткая</option><option selected>средняя</option><option>длинная</option></select>
+    <div class="flex"><button class="btn" data-action="aiArticle">✍️ Написать</button><button class="btn btn-ghost" data-action="aiArticleHuman">🧬 +очеловечить</button><button class="btn btn-ghost" data-action="genImageFromArticle">🖼 Обложка</button></div></div>
+    <div style="grid-column:span 2"><div id="aiArticleResult" style="color:var(--muted)">...</div></div></div></div>
+</div>
+
+<!-- КАРТИНКИ -->
+<div class="section" id="images"><div class="panel"><h2>🖼 Генерация (Flux/Gemini/Kandinsky)</h2>
+  <div class="tip">Pollinations теперь использует Flux + enhance + авто-перевод. Точно по теме.</div>
+  <input type="text" id="imgTopic" placeholder="Тема (рус/англ)"><select id="imgStyle"><option value="photo">📷 Фото</option><option value="illu">🎨 Иллюстрация</option><option value="flat">🟦 Флэт</option><option value="vintage">📜 Винтаж</option></select>
+  <button class="btn" data-action="genImage">🖼 Сгенерировать</button><div id="imgResult"></div></div></div>
+
+<!-- ЧЕЛОВЕЧНОСТЬ -->
+<div class="section" id="human"><div class="panel"><h2>🧬 Очеловечивание</h2><textarea id="humanText" style="min-height:200px" placeholder="Текст..."></textarea>
+  <div class="flex"><button class="btn" data-action="analyzeHuman">🔍 Анализ</button><button class="btn btn-ghost" data-action="rewriteHuman">✨ Переписать</button></div><div id="humanResult"></div></div>
+  <div class="panel"><h2>📋 Чек-лист</h2><div id="humanChecklist"></div><div class="progress-bar"><div class="progress-fill" id="humanProgress" style="width:0%"></div></div></div>
+</div>
+
+<!-- КОНСТРУКТОР -->
+<div class="section" id="builder"><div class="panel"><h2>🛠 Конструктор</h2><input type="text" id="bTitle" placeholder="Заголовок"><div id="titleCheck"></div><input type="text" id="bTopic" placeholder="Тема"><button class="btn" data-action="buildStructure">📐 Структура</button><div id="structureResult"></div></div></div>
+
+<!-- ПРОВЕРКА -->
+<div class="section" id="checker"><div class="panel"><h2>✅ Чек-лист публикации</h2><input type="text" id="checkName" placeholder="Название"><div id="checkList"></div><div class="progress-bar"><div class="progress-fill" id="checkProgress" style="width:0%"></div></div>
+  <div class="flex"><button class="btn btn-sm" data-action="saveCheck">💾 Сохранить</button><button class="btn btn-sm btn-ghost" data-action="resetChecks">Сброс</button></div></div>
+  <div class="panel"><h2>🚫 Сканер стоп-слов</h2><textarea id="textScan" placeholder="Текст..."></textarea><button class="btn" data-action="scanText">🔍</button><div id="scanResult"></div></div>
+</div>
+
+<!-- ПЛАН -->
+<div class="section" id="plan"><div class="panel"><h2>📅 План</h2><div class="grid"><div><input type="text" id="planTitle" placeholder="Заголовок"></div><div><input type="date" id="planDate"></div><div><select id="planFormat"><option>Статья</option><option>Ролик</option><option>Пост</option></select></div><div><select id="planStatus"><option value="idea">Идея</option><option value="work">В работе</option><option value="done">Готово</option></select></div></div>
+  <button class="btn" data-action="addPlan">+ Добавить</button><div id="planList" style="margin-top:16px"></div></div></div>
+
+<!-- ШАБЛОНЫ -->
+<div class="section" id="templates"><div class="panel"><h2>📄 Каркасы</h2><div class="grid">
+  <div class="card"><h4>📖 Инструкция</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="0">📋</button></div>
+  <div class="card"><h4>🗂 Подборка</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="1">📋</button></div>
+  <div class="card"><h4>💬 Опыт</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="2">📋</button></div>
+  <div class="card"><h4>⚖️ Разбор</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="3">📋</button></div>
+</div></div></div>
+
+</div>
+
+<script>
+const STORE_KEY='zenFactory_v5';const raw=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');
+const data=Object.assign({ideas:[],plan:[],checks:[],checkState:{}},raw);
+data.settings=Object.assign({apiKey:'',model:'gemini-2.0-flash',imageProvider:'pollinations',geminiImageModel:'gemini-3.1-flash-image',hfToken:'',hfModel:'ai-forever/Kandinsky-3.1'},raw.settings||{});
+const lastImages={},tempGenerated={};
+function save(){localStorage.setItem(STORE_KEY,JSON.stringify(data));renderAll();}
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
+const DZEN_RULES='Правила Дзен: без кликбейта, заголовок=суть, уникальность, без 18+, короткие абзацы, вопрос в конце.';
+
+async function callGemini(p){const k=data.settings.apiKey;if(!k)throw new Error('Нет Gemini ключа');const m=data.settings.model||'gemini-2.0-flash';const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(k)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})});if(!r.ok){let e='HTTP '+r.status;try{const j=await r.json();e+=': '+(j.error?.message||'')}catch(_){}throw new Error(e);}const j=await r.json();const t=(j.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('');if(!t)throw new Error('Пустой ответ');return t;}
+
+async function translatePrompt(text){if(!data.settings.apiKey)return text;try{const r=await callGemini(`Translate to English for image generation. Be descriptive and visual. Text: "${text}". Return only translation.`);return r.trim();}catch(e){return text;}}
+
+async function generateImage(prompt){
+  const prov=data.settings.imageProvider||'pollinations';
+  if(prov==='pollinations'){
+    const en=await translatePrompt(prompt);
+    const enhanced=`High quality, detailed, ${en}. Focus on main subject, accurate composition, professional style.`;
+    const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(enhanced)}?model=flux&width=1024&height=576&nologo=true&seed=${Math.floor(Math.random()*1e5)}&enhance=true`;
+    const r=await fetch(url);if(!r.ok)throw new Error('Pollinations HTTP '+r.status);
+    const b=await r.blob();return new Promise((res,rej)=>{const fr=new FileReader();fr.onloadend=()=>res({mime:b.type,data:fr.result.split(',')[1]});fr.onerror=rej;fr.readAsDataURL(b);});
+  }
+  if(prov==='huggingface'){
+    const tk=data.settings.hfToken;if(!tk)throw new Error('Нет HF токена');
+    const md=data.settings.hfModel||'ai-forever/Kandinsky-3.1';
+    const en=await translatePrompt(prompt);
+    const r=await fetch(`https://api-inference.huggingface.co/models/${md}`,{method:'POST',headers:{'Authorization':'Bearer '+tk,'Content-Type':'application/json'},body:JSON.stringify({inputs:en,parameters:{width:1024,height:576}})});
+    if(!r.ok)throw new Error('HF error: '+(await r.text()).substring(0,120));
+    const b=await r.blob();return new Promise((res,rej)=>{const fr=new FileReader();fr.onloadend=()=>res({mime:b.type||'image/png',data:fr.result.split(',')[1]});fr.onerror=rej;fr.readAsDataURL(b);});
+  }
+  // Gemini 3.1
+  const k=data.settings.apiKey;if(!k)throw new Error('Нет Gemini ключа');
+  const md=data.settings.geminiImageModel||'gemini-3.1-flash-image';
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${md}:generateContent?key=${encodeURIComponent(k)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:["IMAGE","TEXT"]}})});
+  if(!r.ok){let e='HTTP '+r.status;try{const j=await r.json();e+=': '+(j.error?.message||'');if(r.status===404)e+=' | Модель недоступна, попробуй gemini-3.1-flash-image.';}catch(_){}throw new Error(e);}
+  const j=await r.json();for(const p of (j.candidates?.[0]?.content?.parts||[])){if(p.inlineData?.data)return{mime:p.inlineData.mimeType||'image/png',data:p.inlineData.data};}
+  throw new Error('Gemini не вернул картинку');
+}
+
+function setLoading(id,m){document.getElementById(id).innerHTML='<div class="loading">⏳ '+(m||'...')+'</div>';}
+function showError(id,e){document.getElementById(id).innerHTML='<div class="result-box"><span class="badge badge-bad">'+escapeHtml(e.message)+'</span></div>';}
+function renderTextResult(id,t){document.getElementById(id).innerHTML='<div class="result-box ai-text" id="'+id+'_text">'+escapeHtml(t)+'</div><div style="margin-top:10px" class="flex"><button class="btn btn-sm" data-action="copyResult" data-target="'+id+'_text">📋</button><button class="btn btn-sm btn-ghost" data-action="sendToHuman" data-target="'+id+'_text">🧬</button></div>';}
+function parseLines(t){return t.split('\n').map(s=>s.trim()).filter(s=>s.length>3).map(s=>s.replace(/^\s*\d+[\.\)\-]\s*/,'').replace(/^[-•*]\s*/,''));}
+function renderIdeaList(id,t){tempGenerated[id]=t;document.getElementById(id).innerHTML=t.map((x,i)=>'<div class="plan-item"><div class="meta"><div class="title">'+escapeHtml(x)+'</div></div><button class="btn btn-sm" data-action="bankGenerated" data-list="'+id+'" data-index="'+i+'">+</button></div>').join('');}
+
+async function aiIdeas(){if(!data.settings.apiKey){toast('Нужен ключ');switchTab('settings');return;}setLoading('aiIdeasResult');try{renderIdeaList('aiIdeasResult',parseLines(await callGemini('10 честных заголовков для Дзен. Ниша: '+document.getElementById('aiNiche').value+'. '+DZEN_RULES)));}catch(e){showError('aiIdeasResult',e);}}
+async function aiTitles(){if(!data.settings.apiKey)return;const t=document.getElementById('aiTitleTopic').value.trim();if(!t){toast('Тема?');return;}setLoading('aiTitlesResult');try{renderTextResult('aiTitlesResult',await callGemini('7 заголовков: '+t+'. '+DZEN_RULES));}catch(e){showError('aiTitlesResult',e);}}
+async function aiArticle(){if(!data.settings.apiKey)return;const ti=document.getElementById('artTitle').value.trim(),to=document.getElementById('artTopic').value.trim(),v=document.getElementById('artVolume').value;if(!ti&&!to){toast('Тема?');return;}setLoading('aiArticleResult','Пишу...');try{renderTextResult('aiArticleResult',await callGemini('Статья Дзен. Заголовок: '+(ti||'(придумай)')+'. Тема: '+(to||ti)+'. Объём: '+v+'. '+DZEN_RULES+'\nСтруктура: крючок, контекст, 3-5 блоков, итог, вопрос.'));}catch(e){showError('aiArticleResult',e);}}
+async function aiArticleHuman(){if(!data.settings.apiKey)return;const ti=document.getElementById('artTitle').value.trim(),to=document.getElementById('artTopic').value.trim(),v=document.getElementById('artVolume').value;if(!ti&&!to){toast('Тема?');return;}setLoading('aiArticleResult','1/2 пишу...');try{const d=await callGemini('Статья Дзен. Заголовок: '+(ti||'(придумай)')+'. Тема: '+(to||ti)+'. Объём: '+v+'. '+DZEN_RULES);setLoading('aiArticleResult','2/2 очеловечиваю...');renderTextResult('aiArticleResult',await callGemini('Перепиши живо, добавь опыт, убери канцелярит: """'+d+'"""'));toast('✅');}catch(e){showError('aiArticleResult',e);}}
+async function aiDesc(){if(!data.settings.apiKey)return;const t=document.getElementById('descTopic').value.trim();if(!t){toast('Тема?');return;}setLoading('aiDescResult');try{renderTextResult('aiDescResult',await callGemini('Анонс 2-3 предл: '+t+'. '+DZEN_RULES));}catch(e){showError('aiDescResult',e);}}
+async function aiTags(){if(!data.settings.apiKey)return;const t=document.getElementById('tagsTopic').value.trim();if(!t){toast('Тема?');return;}setLoading('aiTagsResult');try{renderTextResult('aiTagsResult',await callGemini('10 хэштегов: '+t));}catch(e){showError('aiTagsResult',e);}}
+async function aiCheck(){if(!data.settings.apiKey)return;const t=document.getElementById('aiCheckText').value.trim();if(!t){toast('Текст?');return;}setLoading('aiCheckResult');try{renderTextResult('aiCheckResult',await callGemini('Проверь на правила Дзен: '+DZEN_RULES+'\nТекст: """'+t+'"""'));}catch(e){showError('aiCheckResult',e);}}
+
+async function genImage(){const t=document.getElementById('imgTopic').value.trim();if(!t){toast('Тема?');return;}const st=document.getElementById('imgStyle').value;const styles={photo:'photorealistic',illu:'digital illustration',flat:'flat design',vintage:'vintage historical'};const prompt=`Create bright cover. Theme: ${t}. Style: ${styles[st]}. Wide 16:9. No text, no watermark.`;const prov=data.settings.imageProvider||'pollinations';setLoading('imgResult',`Рисую через ${prov}...`);try{const img=await generateImage(prompt);lastImages['imgResult']='data:'+img.mime+';base64,'+img.data;document.getElementById('imgResult').innerHTML='<img src="'+lastImages['imgResult']+'" style="max-width:100%;border-radius:12px;margin-top:12px"><div style="margin-top:10px"><button class="btn btn-sm" data-action="downloadImage" data-target="imgResult">⬇️ PNG</button></div>';toast('✅');}catch(e){showError('imgResult',e);}}
+function genImageFromArticle(){const t=document.getElementById('artTitle').value.trim()||document.getElementById('artTopic').value.trim();if(!t){toast('Заголовок?');return;}document.getElementById('imgTopic').value=t;switchTab('images');genImage();}
+function downloadImage(tg){const s=lastImages[tg];if(!s){toast('Нет');return;}const a=document.createElement('a');a.href=s;a.download='zen-'+Date.now()+'.png';document.body.appendChild(a);a.click();a.remove();}
+function sendToHuman(tg){const el=document.getElementById(tg);if(!el)return;document.getElementById('humanText').value=el.innerText;switchTab('human');toast('Перенесено');}
+
+const aiPatterns=[{re:/в современном мире|важно отметить|является|осуществляется|в заключение|таким образом/i,msg:'Канцелярит'},{re:/безусловно|несомненно|очевидно/i,msg:'Усилители'}];
+const humanChecklistItems=['Личный опыт','Цифры/факты','Нет канцелярита','Эмоция','Разная длина предложений','Вопрос читателю','Личная деталь','Уникальность >90%'];
+function renderHumanChecklist(){const el=document.getElementById('humanChecklist');el.innerHTML=humanChecklistItems.map((it,i)=>'<div class="check-item"><input type="checkbox" id="hchk_'+i+'"><label for="hchk_'+i+'">'+it+'</label></div>').join('');el.querySelectorAll('input').forEach(cb=>cb.addEventListener('change',updateHumanProgress));}
+function updateHumanProgress(){const t=humanChecklistItems.length,d=document.querySelectorAll('#humanChecklist input:checked').length;document.getElementById('humanProgress').style.width=(d/t*100)+'%';}
+function analyzeHuman(){const t=document.getElementById('humanText').value;if(!t.trim()){toast('Текст?');return;}const f=[];aiPatterns.forEach(p=>{if(new RegExp(p.re.source,'gi').test(t))f.push(p.msg);});const hp=/\bя\b|\bмы\b/i.test(t),hn=/\d/.test(t),hq=/\?/.test(t);document.getElementById('humanResult').innerHTML='<div class="result-box"><h3>🔍 Паттерны</h3>'+(f.length?f.map(x=>'<span class="badge badge-bad">'+x+'</span>').join(' '):'<span class="badge badge-ok">✅ Чисто</span>')+'<h3>📊 Метрики</h3><div>Местоимение: '+(hp?'<span class="badge badge-ok">Есть</span>':'<span class="badge badge-bad">Нет</span>')+'</div><div>Цифры: '+(hn?'<span class="badge badge-ok">Есть</span>':'<span class="badge badge-warn">Мало</span>')+'</div><div>Вопрос: '+(hq?'<span class="badge badge-ok">Есть</span>':'<span class="badge badge-warn">Нет</span>')+'</div></div>';}
+async function rewriteHuman(){if(!data.settings.apiKey){toast('Ключ');return;}const t=document.getElementById('humanText').value;if(!t.trim()){toast('Текст?');return;}setLoading('humanResult','Очеловечиваю...');try{renderTextResult('humanResult',await callGemini('Перепиши живо, добавь опыт, убери канцелярит: """'+t+'"""'));}catch(e){showError('humanResult',e);}}
+
+function saveSettings(){data.settings.apiKey=document.getElementById('apiKey').value.trim();data.settings.model=document.getElementById('apiModel').value.trim()||'gemini-2.0-flash';data.settings.imageProvider=document.getElementById('imageProvider').value;data.settings.geminiImageModel=document.getElementById('geminiImageModel').value;data.settings.hfToken=document.getElementById('hfToken').value.trim();data.settings.hfModel=document.getElementById('hfModel').value;save();toast('Сохранено');}
+async function testConnection(){saveSettings();if(!data.settings.apiKey){toast('Ключ');return;}const st=document.getElementById('connStatus');st.innerHTML='<span class="badge badge-info">...</span>';try{st.innerHTML='<span class="badge badge-ok">✅ '+escapeHtml(await callGemini('Ответь одним словом: работает'))+'</span>';}catch(e){st.innerHTML='<span class="badge badge-bad">❌ '+escapeHtml(e.message)+'</span>';}}
+document.getElementById('imageProvider').addEventListener('change',function(){const v=this.value;document.getElementById('geminiImageSettings').style.display=v==='gemini'?'block':'none';document.getElementById('hfImageSettings').style.display=v==='huggingface'?'block':'none';document.getElementById('pollinationsInfo').style.display=v==='pollinations'?'block':'none';});
+
+const ideaDB={cooking:{howto:['Готовим дома','Рецепт за 30 мин'],list:['7 ужинов','5 блюд из холодильника'],story:['Месяц готовил','Научился печь'],compare:['Дорогой vs дешёвый','Дом vs магазин'],mistakes:['5 ошибок','Тесто не поднимается']},home:{howto:['Ремонт сам','Утепление балкона'],list:['7 лайфхаков','5 ошибок покупки'],story:['Год после ремонта','Собрал мебель'],compare:['Краска дорогая vs дешёвая','Сам vs мастер'],mistakes:['5 ошибок ремонта','Переплатил']},garden:{howto:['Урожай раньше','Посадка по шагам'],list:['7 растений','5 ошибок дачника'],story:['Участок в сад','Борьба с вредителем'],compare:['Теплица vs парник','Грунт дорогой vs дешёвый'],mistakes:['4 ошибки новичка','Не плодоносит']},tech:{howto:['Настройка 15 мин','Ускорение гаджета'],list:['5 бесплатных программ','7 скрытых функций'],story:['Перешёл с А на Б','Восстановил данные'],compare:['Гаджет А vs Б','Бюджет vs флагман'],mistakes:['5 ошибок покупки','Тормозит']},finance:{howto:['Личный бюджет','Кэшбэк'],list:['5 привычек экономии','7 способов сократить'],story:['Год 10%','Выбрался из кредитки'],compare:['Вклад vs накопительный','Банк А vs Б'],mistakes:['5 фин.ошибок','Копилка пуста']},health:{howto:['Разминка 10 мин','Режим сна'],list:['5 привычек ЗОЖ','7 шагов к сну'],story:['Месяц в 6 утра','30 дней без сладкого'],compare:['Ходьба vs бег','Утро vs вечер'],mistakes:['4 ошибки сидячего','Не высыпался']},travel:{howto:['План поездки','Бюджетно'],list:['7 неочевидных мест','5 способов сэкономить'],story:['Поездка с цифрами','С детьми'],compare:['Место А vs Б','Сам vs тур'],mistakes:['Что пошло не так','5 ошибок первой поездки']},history:{howto:['Что если бы','Быт эпохи'],list:['7 мифов','5 фактов'],story:['Месяц изучал','Проверил миф'],compare:['Личность А vs Б','Эпоха А vs Б'],mistakes:['5 заблуждений','Учебник врёт']}};
+function genManualIdeas(){const n=document.getElementById('mNiche').value,f=document.getElementById('mFormat').value;renderIdeaList('manualIdeasResult',(ideaDB[n]&&ideaDB[n][f])||['Нет']);}
+function addToBank(t){if(!t||data.ideas.find(i=>i.title===t))return;data.ideas.push({title:t,date:new Date().toLocaleDateString('ru')});save();}
+function addIdeaManual(){const i=document.getElementById('manualIdea'),v=i.value.trim();if(v){addToBank(v);i.value='';toast('+');}}
+function renderIdeasBank(){const el=document.getElementById('ideasBank');if(!data.ideas.length){el.innerHTML='<p style="color:var(--muted)">Пусто</p>';return;}el.innerHTML=data.ideas.map((it,i)=>'<div class="plan-item"><div class="meta"><div class="title">'+escapeHtml(it.title)+'</div><div class="sub">'+it.date+'</div></div><div class="flex"><button class="btn btn-sm" data-action="ideaToPlan" data-index="'+i+'">📅</button><button class="btn btn-sm btn-danger" data-action="removeIdea" data-index="'+i+'">✕</button></div></div>').join('');}
+
+function addPlan(){const t=document.getElementById('planTitle').value.trim();if(!t){toast('Заголовок?');return;}data.plan.push({title:t,date:document.getElementById('planDate').value||'—',format:document.getElementById('planFormat').value,status:document.getElementById('planStatus').value});document.getElementById('planTitle').value='';save();toast('+');}
+function renderPlan(){const el=document.getElementById('planList');if(!data.plan.length){el.innerHTML='<p style="color:var(--muted)">Пусто</p>';return;}el.innerHTML=data.plan.map((p,i)=>'<div class="plan-item"><div class="meta"><div class="title">'+escapeHtml(p.title)+'</div><div class="sub">📅 '+escapeHtml(p.date)+' · '+escapeHtml(p.format)+'</div></div><div class="flex"><select data-plan-status data-index="'+i+'" style="margin:0;width:auto;padding:6px"><option value="idea"'+(p.status==='idea'?' selected':'')+'>Идея</option><option value="work"'+(p.status==='work'?' selected':'')+'>В работе</option><option value="done"'+(p.status==='done'?' selected':'')+'>Готово</option></select><button class="btn btn-sm btn-danger" data-action="removePlan" data-index="'+i+'">✕</button></div></div>').join('');}
+
+const checklist=[{cat:'Заголовок',items:['Честный','Без шок','До 70 зн']},{cat:'Контент',items:['Уникальный','Личный опыт','Короткие абзацы']},{cat:'Оформление',items:['3+ фото','Обложка по теме']},{cat:'Правила',items:['Без 18+','Без агрессии','Финал-вопрос']}];
+function renderChecklist(){const el=document.getElementById('checkList');let h='';checklist.forEach((c,ci)=>{h+='<h3>'+c.cat+'</h3>';c.items.forEach((it,ii)=>{const k=ci+'_'+ii;h+='<div class="check-item"><input type="checkbox" id="chk_'+k+'"'+(data.checkState[k]?' checked':'')+'><label for="chk_'+k+'">'+it+'</label></div>';});});el.innerHTML=h;el.querySelectorAll('input').forEach(cb=>cb.addEventListener('change',function(){data.checkState[this.id.replace('chk_','')]=this.checked;updateProgress();save();}));updateProgress();}
+function updateProgress(){const t=checklist.reduce((s,c)=>s+c.items.length,0),d=Object.values(data.checkState).filter(v=>v).length;document.getElementById('checkProgress').style.width=(d/t*100)+'%';}
+function resetChecks(){data.checkState={};renderChecklist();save();}
+function saveCheck(){const n=document.getElementById('checkName').value.trim()||'Без названия',t=checklist.reduce((s,c)=>s+c.items.length,0),d=Object.values(data.checkState).filter(v=>v).length;if(d<t){toast(d+'/'+t);return;}data.checks.push({name:n,date:new Date().toLocaleDateString('ru')});data.checkState={};renderChecklist();save();toast('✅');}
+function scanText(){const t=document.getElementById('textScan').value;if(!t.trim())return;const f=[];[{re:/шок|не поверите|врачи скрывают|100% способ|гарантированный доход/i,msg:'Кликбейт/гарантии'}].forEach(s=>{if(s.re.test(t))f.push(s.msg);});document.getElementById('scanResult').innerHTML=f.length?'<div class="result-box"><span class="badge badge-bad">'+f.join(', ')+'</span></div>':'<div class="result-box"><span class="badge badge-ok">✅ Чисто</span></div>';}
+
+function buildStructure(){const t=document.getElementById('bTitle').value.trim(),to=document.getElementById('bTopic').value.trim()||'тема';const r=[];const tt=t||'Введи';if(tt.length<15)r.push({type:'warn',msg:'Короткий'});[{re:/шок|не поверите|\.\.\.|[А-ЯЁ]{4,}/i,msg:'Кликбейт'},{re:/^.{70,}$/,msg:'>70'}].forEach(p=>{if(p.re.test(tt))r.push({type:'bad',msg:p.msg});});if(!r.length)r.push({type:'ok',msg:'OK'});document.getElementById('titleCheck').innerHTML=r.map(x=>'<span class="badge badge-'+x.type+'">'+x.msg+'</span>').join(' ');document.getElementById('structureResult').innerHTML='<div class="result-box">📌 '+escapeHtml(t||'(введи)')+'\nТема: '+escapeHtml(to)+'\n\n1️⃣ Крючок\n2️⃣ Контекст\n3️⃣ 3-5 блоков\n4️⃣ Цифры\n5️⃣ Итог\n6️⃣ Вопрос</div>';}
+
+const templates=['ИНСТРУКЦИЯ\n🪝 Крючок\n📦 Понадобится\n📝 Шаги\n⚠️ Ошибки\n✅ Итог\n💬 Вопрос','ПОДБОРКА\nВведение\n1️⃣-5️⃣\n📊 Сравнение\nВывод','ОПЫТ\n📖 Ситуация\n🤔 Пробовал\n💡 Решение\n Результат\n Совет','РАЗБОР\nЧто разбираю\n✅ Плюсы\n❌ Минусы\n⚖️ Сравнение\n🎯 Итог'];
+function copyText(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('📋')).catch(()=>fb(t));else fb(t);}
+function fb(t){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('📋')}catch(e){}a.remove();}
+
+function switchTab(n){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===n));document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===n));}
+document.addEventListener('click',function(e){const tab=e.target.closest('[data-tab]');if(tab){switchTab(tab.dataset.tab);return;}const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,idx=parseInt(el.dataset.index,10);
+  switch(a){case 'saveSettings':saveSettings();break;case 'testConnection':testConnection();break;case 'genManualIdeas':genManualIdeas();break;case 'addIdeaManual':addIdeaManual();break;case 'bankGenerated':addToBank(tempGenerated[el.dataset.list][idx]);toast('+');break;case 'removeIdea':data.ideas.splice(idx,1);save();break;case 'ideaToPlan':document.getElementById('planTitle').value=data.ideas[idx].title;switchTab('plan');break;case 'aiIdeas':aiIdeas();break;case 'aiTitles':aiTitles();break;case 'aiArticle':aiArticle();break;case 'aiArticleHuman':aiArticleHuman();break;case 'aiDesc':aiDesc();break;case 'aiTags':aiTags();break;case 'aiCheck':aiCheck();break;case 'genImage':genImage();break;case 'genImageFromArticle':genImageFromArticle();break;case 'downloadImage':downloadImage(el.dataset.target);break;case 'sendToHuman':sendToHuman(el.dataset.target);break;case 'copyResult':copyText(document.getElementById(el.dataset.target).innerText);break;case 'analyzeHuman':analyzeHuman();break;case 'rewriteHuman':rewriteHuman();break;case 'buildStructure':buildStructure();break;case 'saveCheck':saveCheck();break;case 'resetChecks':resetChecks();break;case 'scanText':scanText();break;case 'addPlan':addPlan();break;case 'removePlan':data.plan.splice(idx,1);save();break;case 'copyTemplate':copyText(templates[idx]);break;}
+});
+document.addEventListener('change',function(e){if(e.target.matches('[data-plan-status]')){data.plan[parseInt(e.target.dataset.index,10)].status=e.target.value;save();}});
+
+function renderAll(){document.getElementById('statIdeas').textContent=data.ideas.length;document.getElementById('statPlan').textContent=data.plan.length;document.getElementById('statDone').textContent=data.plan.filter(p=>p.status==='done').length;document.getElementById('statChecks').textContent=data.checks.length;renderIdeasBank();renderPlan();document.getElementById('keyBanner').innerHTML=data.settings.apiKey?'':'<div class="tip danger-tip">⚠️ Gemini ключ не задан. Для текста нужен. Для картинок — Pollinations работает без ключа.</div>';if(document.activeElement?.id!=='apiKey'){document.getElementById('apiKey').value=data.settings.apiKey||'';document.getElementById('apiModel').value=data.settings.model||'gemini-2.0-flash';document.getElementById('imageProvider').value=data.settings.imageProvider||'pollinations';document.getElementById('geminiImageModel').value=data.settings.geminiImageModel||'gemini-3.1-flash-image';document.getElementById('hfToken').value=data.settings.hfToken||'';document.getElementById('hfModel').value=data.settings.hfModel||'ai-forever/Kandinsky-3.1';document.getElementById('imageProvider').dispatchEvent(new Event('change'));}}
+window.addEventListener('DOMContentLoaded',()=>{document.getElementById('loading-screen').classList.add('hidden');});
+setTimeout(()=>{const ls=document.getElementById('loading-screen');if(ls&&!ls.classList.contains('hidden'))ls.innerHTML='❌ Откройте через HTTP (не file://)';},3000);
+if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+renderChecklist();renderHumanChecklist();renderAll();
+</script>
+</body>
+</html>
