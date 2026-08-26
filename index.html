@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Контент-Фабрика Дзен + AI</title>
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6c5ce7">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 <style>
   :root{--bg:#0f1220;--panel:#181c30;--panel2:#1f2440;--text:#eef1ff;--muted:#9aa3c7;--accent:#6c5ce7;--accent2:#00cec9;--ok:#2ecc71;--warn:#f39c12;--bad:#e74c3c;--border:#2a3050;--radius:14px}
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
@@ -27,7 +24,7 @@
   select optgroup{color:var(--accent2);font-weight:600}
   .btn{padding:12px 22px;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
   .btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(108,92,231,.4)}.btn-sm{padding:8px 15px;font-size:.85rem}.btn-danger{background:var(--bad)}.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-  .section{display:none}.section.active{display:block;animation:fade .3s}@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .section{display:none}.section.active{display:block;animation:fade .3s}
   .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.8rem;margin:2px}.badge-ok{background:rgba(46,204,113,.2);color:var(--ok)}.badge-warn{background:rgba(243,156,18,.2);color:var(--warn)}.badge-bad{background:rgba(231,76,60,.2);color:var(--bad)}.badge-info{background:rgba(0,206,201,.2);color:var(--accent2)}
   .check-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--panel2);border-radius:8px;margin-bottom:8px}.check-item input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--accent)}.check-item label{margin:0;flex:1;color:var(--text)}
   .stat{text-align:center}.stat .num{font-size:2.4rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -35,12 +32,14 @@
   .result-box{background:var(--bg);border-left:4px solid var(--accent2);padding:16px;border-radius:8px;margin-top:12px;white-space:pre-wrap;line-height:1.6;overflow-x:auto}.ai-text{max-height:500px;overflow-y:auto}
   .tip{background:rgba(0,206,201,.1);border-left:4px solid var(--accent2);padding:12px;border-radius:8px;margin:10px 0;font-size:.9rem}.danger-tip{background:rgba(231,76,60,.1);border-left:4px solid var(--bad)}
   .flex{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.progress-bar{height:10px;background:var(--bg);border-radius:5px;overflow:hidden;margin:8px 0}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.4s}
-  .loading{color:var(--accent2);padding:10px;font-style:italic}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent2);color:var(--text);padding:12px 22px;border-radius:10px;z-index:99;animation:fade .3s;box-shadow:0 5px 20px rgba(0,0,0,.4)}
-  a{color:var(--accent2)}#loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;color:var(--text);font-size:1.2rem}#loading-screen.hidden{display:none}
-  /* Превью статьи в стиле Дзен */
-  .article-preview{background:#fff;color:#1a1a1a;padding:24px;border-radius:12px;margin-top:12px;font-family:Georgia,'Times New Roman',serif;line-height:1.7;max-height:600px;overflow-y:auto}
-  .article-preview h1{font-size:1.8rem;margin-bottom:12px;color:#1a1a1a;line-height:1.3}
-  .article-preview h2{font-size:1.4rem;margin:20px 0 10px;color:#1a1a1a;border-bottom:2px solid var(--accent);padding-bottom:6px}
+  .loading{color:var(--accent2);padding:10px;font-style:italic}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent2);color:var(--text);padding:12px 22px;border-radius:10px;z-index:99;box-shadow:0 5px 20px rgba(0,0,0,.4)}
+  a{color:var(--accent2)}
+  #loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;color:var(--text);font-size:1.2rem}
+  #loading-screen.hidden{display:none}
+  .article-preview{background:#fff;color:#1a1a1a;padding:24px;border-radius:12px;margin-top:12px;font-family:Georgia,serif;line-height:1.7;max-height:600px;overflow-y:auto}
+  .article-preview h1{font-size:1.8rem;margin-bottom:12px;line-height:1.3}
+  .article-preview h2{font-size:1.4rem;margin:20px 0 10px;border-bottom:2px solid var(--accent);padding-bottom:6px}
   .article-preview h3{font-size:1.15rem;margin:16px 0 8px;color:#333}
   .article-preview p{margin:10px 0;font-size:1.05rem}
   .article-preview ul,.article-preview ol{margin:10px 0;padding-left:28px}
@@ -48,18 +47,18 @@
   .article-preview .meta{color:#666;font-size:.9rem;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #eee}
   .article-preview .tags{color:var(--accent);font-size:.95rem;margin-top:20px;padding-top:12px;border-top:1px solid #eee}
   .article-preview blockquote{border-left:4px solid var(--accent);padding:8px 16px;margin:16px 0;background:#f8f9fa;font-style:italic}
-  .source-tabs{display:flex;gap:8px;margin-top:12px}
+  .source-tabs{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
   .source-tab{padding:8px 16px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--muted);font-size:.85rem}
   .source-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .source-content{display:none}.source-content.active{display:block}
-  .code-box{background:#0a0d15;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'Consolas',monospace;font-size:.85rem;color:#a8e6cf;white-space:pre-wrap;word-break:break-all;max-height:400px;overflow-y:auto;margin-top:10px}
+  .code-box{background:#0a0d15;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:Consolas,monospace;font-size:.85rem;color:#a8e6cf;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;margin-top:10px}
   @media(max-width:700px){.plan-item{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
 <div id="loading-screen">⏳ Загрузка фабрики...</div>
 <div class="container">
-<header><h1>🏭 Контент-Фабрика Дзен</h1><p>Yandex (Alice/YandexGPT/YandexART 2.0/DeepSeek/Qwen) + Gemini 3.6 Flash + Pollinations + Kandinsky</p></header>
+<header><h1>🏭 Контент-Фабрика Дзен</h1><p>Gemini 3.6 Flash + Yandex (Alice/GPT/YandexART 2.0/DeepSeek/Qwen) + Pollinations + Kandinsky</p></header>
 <div class="tabs">
   <div class="tab active" data-tab="dashboard">📊 Дашборд</div><div class="tab" data-tab="settings">⚙️ Настройки</div>
   <div class="tab" data-tab="ideas">💡 Идеи</div><div class="tab" data-tab="ai">🤖 AI Студия</div>
@@ -68,32 +67,481 @@
   <div class="tab" data-tab="plan">📅 План</div><div class="tab" data-tab="templates">📄 Шаблоны</div>
 </div>
 
-<!-- НАСТРОЙКИ -->
-<div class="section" id="settings"><div class="panel"><h2>️ Подключение API</h2>
-  <div class="tip">
-    1. <b>Yandex Cloud:</b> <a href="https://console.yandex.cloud/" target="_blank">console.yandex.cloud</a> → грант 4000₽ → API ключ + Folder ID<br>
-    2. <b>Gemini:</b> <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a><br>
-    3. <b>Hugging Face:</b> <a href="https://huggingface.co/settings/tokens" target="_blank">hf.co/settings/tokens</a><br>
-    4. <b>Pollinations:</b> без ключа, бесплатно
-  </div>
-  
+<div class="section" id="settings"><div class="panel"><h2>⚙️ Подключение API</h2>
+  <div class="tip">1. <b>Yandex Cloud:</b> console.yandex.cloud (грант 4000₽) → API ключ + Folder ID<br>2. <b>Gemini:</b> aistudio.google.com/apikey<br>3. <b>Hugging Face:</b> hf.co/settings/tokens<br>4. <b>Pollinations:</b> без ключа</div>
   <h3>📝 Провайдер текста</h3>
-  <select id="textProvider"><option value="yandex">🔵 Yandex AI Studio (Alice/GPT/DeepSeek/Qwen)</option><option value="gemini">🟢 Gemini (Google)</option></select>
-  
-  <div id="yandexTextSettings">
-    <label>Yandex Cloud API ключ</label><input type="password" id="yandexApiKey" placeholder="AQVN...">
-    <label>Folder ID</label><input type="text" id="yandexFolderId" placeholder="b1g... (из консоли)">
-    <label>Модель текста (Model Gallery)</label>
+  <select id="textProvider"><option value="gemini">🟢 Gemini (Google)</option><option value="yandex">🔵 Yandex AI Studio</option></select>
+  <div id="geminiTextSettings">
+    <label>Gemini API ключ</label><input type="password" id="apiKey" placeholder="AIza...">
+    <label>Модель</label>
+    <select id="apiModel">
+      <option value="gemini-3.6-flash">⚡ Gemini 3.6 Flash (новая)</option>
+      <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+      <option value="gemini-2.5-pro">💎 Gemini 2.5 Pro</option>
+      <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+    </select>
+  </div>
+  <div id="yandexTextSettings" style="display:none">
+    <label>Yandex API ключ</label><input type="password" id="yandexApiKey" placeholder="AQVN...">
+    <label>Folder ID</label><input type="text" id="yandexFolderId" placeholder="b1g...">
+    <label>Модель</label>
     <select id="yandexModel">
-      <optgroup label="🇷 Яндекс">
-        <option value="alice-ai-llm/latest">🟣 Alice AI LLM (флагман, чаты)</option>
-        <option value="yandexgpt-pro/latest">🔵 YandexGPT Pro 5.1 (макс. качество)</option>
-        <option value="yandexgpt/latest" selected>🔵 YandexGPT Latest</option>
-        <option value="yandexgpt-lite/latest">⚡ YandexGPT Lite (быстро/дешевле)</option>
-      </optgroup>
-      <optgroup label=" Сторонние в Model Gallery">
-        <option value="deepseek-v4-flash"> DeepSeek V4 Flash (reasoning)</option>
-        <option value="qwen-plus"> Qwen Plus (анализ)</option>
+      <optgroup label="Яндекс"><option value="alice-ai-llm/latest">🟣 Alice AI LLM</option><option value="yandexgpt-pro/latest">🔵 YandexGPT Pro</option><option value="yandexgpt/latest" selected>🔵 YandexGPT</option><option value="yandexgpt-lite/latest">⚡ YandexGPT Lite</option></optgroup>
+      <optgroup label="Сторонние"><option value="deepseek-v4-flash">🧠 DeepSeek V4 Flash</option><option value="qwen-plus">🟢 Qwen Plus</option></optgroup>
+    </select>
+  </div>
+  <hr style="border-color:var(--border);margin:20px 0">
+  <h3>🖼 Провайдер картинок</h3>
+  <select id="imageProvider">
+    <option value="pollinations">🆓 Pollinations (Flux, бесплатно)</option>
+    <option value="yandex">🔵 YandexART 2.0 / Latest</option>
+    <option value="gemini">🟢 Gemini 3.1 Flash Image</option>
+    <option value="huggingface">🤗 Hugging Face (Kandinsky/Flux)</option>
+  </select>
+  <div id="yandexImageSettings" style="display:none"><label>Модель картинок</label><select id="yandexArtModel"><option value="yandex-art-2.0">🎨 YandexART 2.0</option><option value="yandex-art/latest" selected>🖼 YandexART Latest</option></select></div>
+  <div id="geminiImageSettings" style="display:none"><label>Модель Gemini</label><select id="geminiImageModel"><option value="gemini-3.1-flash-image">🍌 Nano Banana 2</option><option value="gemini-3.1-flash-lite-image">⚡ Nano Banana 2 Lite</option></select></div>
+  <div id="hfImageSettings" style="display:none"><label>HF Token</label><input type="password" id="hfToken" placeholder="hf_..."><label>Модель</label><select id="hfModel"><option value="ai-forever/Kandinsky-3.1">Kandinsky 3.1</option><option value="black-forest-labs/FLUX.1-schnell">FLUX.1 Schnell</option></select></div>
+  <div id="pollinationsInfo"><div class="tip">Pollinations: Flux + enhance, авто-перевод промпта.</div></div>
+  <div class="flex" style="margin-top:16px"><button class="btn" data-action="saveSettings">💾 Сохранить</button><button class="btn btn-ghost" data-action="testConnection">🔌 Проверить</button></div>
+  <div id="connStatus" style="margin-top:12px"></div>
+</div></div>
+
+<div class="section active" id="dashboard"><div id="keyBanner"></div>
+  <div class="panel"><h2>📊 Обзор</h2><div class="grid"><div class="card stat"><div class="num" id="statIdeas">0</div>Идей</div><div class="card stat"><div class="num" id="statPlan">0</div>В плане</div><div class="card stat"><div class="num" id="statDone">0</div>Опубликовано</div><div class="card stat"><div class="num" id="statChecks">0</div>Проверок</div></div></div>
+  <div class="panel"><h2>⚠️ Правила Дзен</h2><div class="grid"><div class="card"><h4>🚫 Запрещено</h4><p style="color:var(--muted)">Кликбейт • Шок • Плагиат • 18+</p></div><div class="card"><h4>✅ Качество</h4><p style="color:var(--muted)">Уникальность • 3+ фото • Польза</p></div><div class="card"><h4>💰 Монетизация</h4><p style="color:var(--muted)">30 мин дочитываний • Регулярность</p></div><div class="card"><h4>🔍 Осторожно</h4><p style="color:var(--muted)">Медицина • Финансы • Политика</p></div></div></div>
+</div>
+
+<div class="section" id="ideas"><div class="panel"><h2>💡 Генератор идей</h2>
+  <div class="flex"><div style="flex:1"><label>Ниша</label><select id="mNiche"><option value="cooking">🍳 Кулинария</option><option value="home">🏠 Дом</option><option value="garden">🌱 Сад</option><option value="tech">💻 Тех</option><option value="finance">💰 Финансы</option><option value="health">❤️ Здоровье</option><option value="travel">✈️ Путешествия</option><option value="history">🏛 История</option></select></div>
+  <div style="flex:1"><label>Формат</label><select id="mFormat"><option value="howto">Инструкция</option><option value="list">Подборка</option><option value="story">Опыт</option><option value="compare">Сравнение</option><option value="mistakes">Ошибки</option></select></div>
+  <button class="btn" data-action="genManualIdeas" style="align-self:flex-end">Сгенерировать</button></div><div id="manualIdeasResult"></div></div>
+  <div class="panel"><h2>🗂 Банк идей</h2><div class="flex"><input type="text" id="manualIdea" placeholder="Своя идея..." style="flex:1;margin:0"><button class="btn btn-sm" data-action="addIdeaManual">+</button></div><div id="ideasBank" style="margin-top:16px"></div></div>
+</div>
+
+<div class="section" id="ai"><div class="panel"><h2>🤖 AI Студия</h2><div class="tip">Статья генерируется в HTML-формате: H1, H2, H3, теги, описание. Копируй и вставляй в Дзен.</div></div>
+  <div class="grid">
+    <div class="card"><h4>💡 10 заголовков</h4><input type="text" id="aiNiche" placeholder="Ниша"><button class="btn btn-sm" data-action="aiIdeas">✨</button><div id="aiIdeasResult"></div></div>
+    <div class="card"><h4>🎯 Варианты</h4><input type="text" id="aiTitleTopic" placeholder="Тема"><button class="btn btn-sm" data-action="aiTitles">✨ 7</button><div id="aiTitlesResult"></div></div>
+    <div class="card"><h4>📝 Анонс</h4><input type="text" id="descTopic" placeholder="Тема"><button class="btn btn-sm" data-action="aiDesc">✨</button><div id="aiDescResult"></div></div>
+    <div class="card"><h4>#️⃣ Теги</h4><input type="text" id="tagsTopic" placeholder="Тема"><button class="btn btn-sm" data-action="aiTags">✨</button><div id="aiTagsResult"></div></div>
+    <div class="card"><h4>🛡 Проверка</h4><textarea id="aiCheckText" placeholder="Текст..."></textarea><button class="btn btn-sm" data-action="aiCheck">✨</button><div id="aiCheckResult"></div></div>
+  </div>
+  <div class="panel" style="margin-top:20px"><h2>✍️ Статья в формате Дзен</h2>
+    <div class="grid"><div>
+      <label>Заголовок (H1)</label><input type="text" id="artTitle" placeholder="Честный заголовок до 70 знаков">
+      <label>Тема / посыл</label><input type="text" id="artTopic" placeholder="О чём статья">
+      <label>Объём</label><select id="artVolume"><option value="короткая (~1500 знаков)">Короткая</option><option value="средняя (~3000 знаков)" selected>Средняя</option><option value="длинная (~5000 знаков)">Длинная</option></select>
+      <label>Тон</label><select id="artTone"><option value="дружелюбный, как рассказ другу">😊 Дружелюбный</option><option value="экспертный, уверенный">🎓 Экспертный</option><option value="простой, без сложных слов">💬 Простой</option></select>
+      <div class="flex" style="margin-top:12px"><button class="btn" data-action="aiArticle">✍️ Написать (HTML)</button><button class="btn btn-ghost" data-action="aiArticleHuman">🧬 +очеловечить</button><button class="btn btn-ghost" data-action="genImageFromArticle">🖼 Обложка</button></div>
+    </div>
+    <div style="grid-column:span 2">
+      <div id="articleTabs" class="source-tabs" style="display:none">
+        <div class="source-tab active" data-source="preview">👁 Предпросмотр</div>
+        <div class="source-tab" data-source="html">📄 HTML</div>
+        <div class="source-tab" data-source="md">📝 Markdown</div>
+        <div class="source-tab" data-source="plain">📋 Текст</div>
+      </div>
+      <div id="articlePreview" class="source-content active"></div>
+      <div id="articleHtml" class="source-content"><div class="code-box" id="articleHtmlCode"></div></div>
+      <div id="articleMd" class="source-content"><div class="code-box" id="articleMdCode"></div></div>
+      <div id="articlePlain" class="source-content"><div class="code-box" id="articlePlainCode"></div></div>
+      <div id="articleActions" class="flex" style="margin-top:12px;display:none">
+        <button class="btn btn-sm" data-action="copyArticleHtml">📋 Копировать HTML</button>
+        <button class="btn btn-sm btn-ghost" data-action="copyArticleMd">📋 Markdown</button>
+        <button class="btn btn-sm btn-ghost" data-action="copyArticlePlain">📋 Текст</button>
+      </div>
+      <div id="aiArticleResult" style="color:var(--muted);margin-top:12px">Здесь появится готовая статья...</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="section" id="images"><div class="panel"><h2>🖼 Генерация картинок</h2>
+  <input type="text" id="imgTopic" placeholder="Тема (рус/англ)"><select id="imgStyle"><option value="photo">📷 Фото</option><option value="illu">🎨 Иллюстрация</option><option value="flat">🟦 Флэт</option><option value="vintage">📜 Винтаж</option></select>
+  <button class="btn" data-action="genImage">🖼 Сгенерировать</button><div id="imgResult"></div></div></div>
+
+<div class="section" id="human"><div class="panel"><h2>🧬 Очеловечивание</h2><textarea id="humanText" style="min-height:200px" placeholder="Текст..."></textarea>
+  <div class="flex"><button class="btn" data-action="analyzeHuman">🔍 Анализ</button><button class="btn btn-ghost" data-action="rewriteHuman">✨ Переписать</button></div><div id="humanResult"></div></div>
+  <div class="panel"><h2>📋 Чек-лист</h2><div id="humanChecklist"></div><div class="progress-bar"><div class="progress-fill" id="humanProgress" style="width:0%"></div></div></div>
+</div>
+
+<div class="section" id="builder"><div class="panel"><h2>🛠 Конструктор</h2><input type="text" id="bTitle" placeholder="Заголовок"><div id="titleCheck"></div><input type="text" id="bTopic" placeholder="Тема"><button class="btn" data-action="buildStructure">📐 Структура</button><div id="structureResult"></div></div></div>
+
+<div class="section" id="checker"><div class="panel"><h2>✅ Чек-лист публикации</h2><input type="text" id="checkName" placeholder="Название"><div id="checkList"></div><div class="progress-bar"><div class="progress-fill" id="checkProgress" style="width:0%"></div></div>
+  <div class="flex"><button class="btn btn-sm" data-action="saveCheck">💾 Сохранить</button><button class="btn btn-sm btn-ghost" data-action="resetChecks">Сброс</button></div></div>
+  <div class="panel"><h2>🚫 Сканер стоп-слов</h2><textarea id="textScan" placeholder="Текст..."></textarea><button class="btn" data-action="scanText">🔍</button><div id="scanResult"></div></div>
+</div>
+
+<div class="section" id="plan"><div class="panel"><h2>📅 План</h2><div class="grid"><div><input type="text" id="planTitle" placeholder="Заголовок"></div><div><input type="date" id="planDate"></div><div><select id="planFormat"><option>Статья</option><option>Ролик</option><option>Пост</option></select></div><div><select id="planStatus"><option value="idea">Идея</option><option value="work">В работе</option><option value="done">Готово</option></select></div></div>
+  <button class="btn" data-action="addPlan">+ Добавить</button><div id="planList" style="margin-top:16px"></div></div></div>
+
+<div class="section" id="templates"><div class="panel"><h2>📄 Каркасы</h2><div class="grid">
+  <div class="card"><h4>📖 Инструкция</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="0">📋</button></div>
+  <div class="card"><h4>🗂 Подборка</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="1">📋</button></div>
+  <div class="card"><h4>💬 Опыт</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="2">📋</button></div>
+  <div class="card"><h4>⚖️ Разбор</h4><button class="btn btn-sm" data-action="copyTemplate" data-index="3">📋</button></div>
+</div></div></div>
+
+</div>
+
+<script>
+window.addEventListener('error', function(e){
+  var ls = document.getElementById('loading-screen');
+  if (ls) { ls.classList.remove('hidden'); ls.innerHTML = '❌ Ошибка скрипта: ' + e.message; }
+});
+
+/* ================= БЕЗОПАСНОЕ ХРАНИЛИЩЕ (работает в sandbox) ================= */
+var STORE_KEY = 'zenFactory_v10';
+var memoryStore = {};
+var safeStorage = {
+  getItem: function(k){ try { return window.localStorage.getItem(k); } catch(e){ return (k in memoryStore) ? memoryStore[k] : null; } },
+  setItem: function(k,v){ try { window.localStorage.setItem(k,v); } catch(e){ memoryStore[k] = String(v); } }
+};
+var raw = {};
+try { raw = JSON.parse(safeStorage.getItem(STORE_KEY) || '{}'); } catch(e){ raw = {}; }
+
+var data = Object.assign({ideas:[],plan:[],checks:[],checkState:{}}, raw);
+data.settings = Object.assign({textProvider:'gemini',apiKey:'',model:'gemini-3.6-flash',yandexApiKey:'',yandexFolderId:'',yandexModel:'yandexgpt/latest',yandexArtModel:'yandex-art/latest',imageProvider:'pollinations',geminiImageModel:'gemini-3.1-flash-image',hfToken:'',hfModel:'ai-forever/Kandinsky-3.1'}, raw.settings || {});
+var lastImages = {}, tempGenerated = {};
+var currentArticle = {html:'',md:'',plain:'',title:'',description:'',tags:''};
+
+function save(){ safeStorage.setItem(STORE_KEY, JSON.stringify(data)); renderAll(); }
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(m){ var t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(function(){t.remove();},2500); }
+var DZEN_RULES = 'Правила Дзен: без кликбейта, заголовок=суть, уникальность, без 18+, короткие абзацы, вопрос в конце.';
+
+function callGemini(p){
+  var k=data.settings.apiKey; if(!k) return Promise.reject(new Error('Нет Gemini ключа'));
+  var m=data.settings.model||'gemini-3.6-flash';
+  var url='https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+encodeURIComponent(k);
+  return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})})
+  .then(function(r){ if(!r.ok) return r.json().then(function(j){ throw new Error('HTTP '+r.status+': '+(j.error&&j.error.message?j.error.message:'')); }); return r.json(); })
+  .then(function(j){ var t=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts||[]).map(function(x){return x.text||'';}).join(''); if(!t) throw new Error('Пустой ответ'); return t; });
+}
+
+function callYandexGPT(prompt){
+  var key=data.settings.yandexApiKey, folderId=data.settings.yandexFolderId;
+  if(!key||!folderId) return Promise.reject(new Error('Yandex ключ или Folder ID не задан'));
+  var model=data.settings.yandexModel||'yandexgpt/latest';
+  if(model.indexOf('deepseek')===0||model.indexOf('qwen')===0){
+    return fetch('https://ai.api.cloud.yandex.net/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key,'x-folder-id':folderId},body:JSON.stringify({model:model,messages:[{role:'user',content:prompt}],max_tokens:2000,temperature:0.7})})
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(j){ return (j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'Пустой ответ'; });
+  }
+  var prefix='gpt'; if(model.indexOf('alice')===0) prefix='alice';
+  var modelUri=prefix+'://'+folderId+'/'+model;
+  return fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Api-Key '+key,'x-folder-id':folderId},body:JSON.stringify({modelUri:modelUri,completionOptions:{stream:false,temperature:0.7,maxTokens:'2000'},messages:[{role:'user',text:prompt}]})})
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(j){ return (j.result&&j.result.alternatives&&j.result.alternatives[0]&&j.result.alternatives[0].message&&j.result.alternatives[0].message.text)||'Пустой ответ YandexGPT'; });
+}
+
+function callYandexArt(prompt){
+  var key=data.settings.yandexApiKey, folderId=data.settings.yandexFolderId;
+  if(!key||!folderId) return Promise.reject(new Error('Yandex ключ или Folder ID не задан'));
+  var modelUri='art://'+folderId+'/'+(data.settings.yandexArtModel||'yandex-art/latest');
+  return fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Api-Key '+key,'x-folder-id':folderId},body:JSON.stringify({modelUri:modelUri,messages:[{text:prompt,weight:1}],generationOptions:{mimeType:'image/png'}})})
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(start){ var opId=start.id; if(!opId) throw new Error('Нет ID операции');
+    var tries=0;
+    function poll(){
+      return new Promise(function(res){ setTimeout(res,2000); }).then(function(){
+        return fetch('https://llm.api.cloud.yandex.net/operations/'+opId,{headers:{'Authorization':'Api-Key '+key}});
+      }).then(function(r){ return r.json(); }).then(function(op){
+        if(op.done){ var d=op.response&&op.response.image&&op.response.image.data; if(d) return {mime:'image/png',data:d}; throw new Error('Операция без картинки'); }
+        if(op.error) throw new Error('YandexART: '+(op.error.message||'ошибка'));
+        tries++; if(tries>30) throw new Error('Таймаут 60 сек');
+        return poll();
+      });
+    }
+    return poll();
+  });
+}
+
+function generateText(prompt){
+  if((data.settings.textProvider||'gemini')==='yandex') return callYandexGPT(prompt);
+  return callGemini(prompt);
+}
+
+function translatePrompt(text){
+  if(data.settings.imageProvider==='yandex') return Promise.resolve(text);
+  if(!data.settings.apiKey) return Promise.resolve(text);
+  return callGemini('Translate to English for image generation. Be descriptive. Text: "'+text+'". Return only translation.').catch(function(){ return text; });
+}
+
+function blobToData(blob){
+  return new Promise(function(res,rej){ var fr=new FileReader(); fr.onloadend=function(){ res({mime:blob.type||'image/png',data:fr.result.split(',')[1]}); }; fr.onerror=rej; fr.readAsDataURL(blob); });
+}
+
+function generateImage(prompt){
+  var prov=data.settings.imageProvider||'pollinations';
+  if(prov==='yandex') return callYandexArt(prompt);
+  if(prov==='pollinations'){
+    return translatePrompt(prompt).then(function(en){
+      var enhanced='High quality, detailed, '+en+'. Focus on main subject, accurate composition.';
+      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(enhanced)+'?model=flux&width=1024&height=576&nologo=true&seed='+Math.floor(Math.random()*100000)+'&enhance=true';
+      return fetch(url).then(function(r){ if(!r.ok) throw new Error('Pollinations HTTP '+r.status); return r.blob(); }).then(blobToData);
+    });
+  }
+  if(prov==='huggingface'){
+    var tk=data.settings.hfToken; if(!tk) return Promise.reject(new Error('Нет HF токена'));
+    var md=data.settings.hfModel||'ai-forever/Kandinsky-3.1';
+    return translatePrompt(prompt).then(function(en){
+      return fetch('https://api-inference.huggingface.co/models/'+md,{method:'POST',headers:{'Authorization':'Bearer '+tk,'Content-Type':'application/json'},body:JSON.stringify({inputs:en,parameters:{width:1024,height:576}})});
+    }).then(function(r){ if(!r.ok) throw new Error('HF HTTP '+r.status); return r.blob(); }).then(blobToData);
+  }
+  var k=data.settings.apiKey; if(!k) return Promise.reject(new Error('Нет Gemini ключа'));
+  var gm=data.settings.geminiImageModel||'gemini-3.1-flash-image';
+  return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+gm+':generateContent?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:['IMAGE','TEXT']}})})
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(j){ var parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]; for(var i=0;i<parts.length;i++){ if(parts[i].inlineData&&parts[i].inlineData.data) return {mime:parts[i].inlineData.mimeType||'image/png',data:parts[i].inlineData.data}; } throw new Error('Gemini не вернул картинку'); });
+}
+
+function setLoading(id,m){ document.getElementById(id).innerHTML='<div class="loading">⏳ '+(m||'...')+'</div>'; }
+function showError(id,e){ document.getElementById(id).innerHTML='<div class="result-box"><span class="badge badge-bad">'+escapeHtml(e.message)+'</span></div>'; }
+function renderSimple(id,t){ document.getElementById(id).innerHTML='<div class="result-box ai-text">'+escapeHtml(t)+'</div>'; }
+function parseLines(t){ return t.split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>3;}).map(function(s){return s.replace(/^\s*\d+[\.\)\-]\s*/,'').replace(/^[-•*]\s*/,'');}); }
+function renderIdeaList(id,t){ tempGenerated[id]=t; document.getElementById(id).innerHTML=t.map(function(x,i){ return '<div class="plan-item"><div class="meta"><div class="title">'+escapeHtml(x)+'</div></div><button class="btn btn-sm" data-action="bankGenerated" data-list="'+id+'" data-index="'+i+'">+</button></div>'; }).join(''); }
+
+function buildArticlePrompt(title,topic,volume,tone){
+  var L=[];
+  L.push('Ты — топовый автор Дзен. Напиши готовую статью для публикации.');
+  L.push('Заголовок (H1): "'+(title||'(придумай честный заголовок до 70 знаков)')+'"');
+  L.push('Тема/посыл: '+(topic||title));
+  L.push('Объём: '+volume);
+  L.push('Тон: '+tone);
+  L.push(DZEN_RULES);
+  L.push('');
+  L.push('СТРУКТУРА ОТВЕТА строго в этом порядке:');
+  L.push('1) Блок [DESCRIPTION] ... [/DESCRIPTION] — анонс 2-3 предложения до 200 знаков.');
+  L.push('2) Блок [TAGS] ... [/TAGS] — 8 тегов через запятую.');
+  L.push('3) Чистый HTML статьи:');
+  L.push('<h1>Заголовок до 70 знаков</h1>');
+  L.push('<p class="meta">Время чтения: X мин · '+new Date().toLocaleDateString('ru')+'</p>');
+  L.push('<p>Крючок 1-2 абзаца.</p>');
+  L.push('<h2>Раздел 1</h2><p>Текст, короткие абзацы.</p>');
+  L.push('<h3>Подраздел</h3><p>Текст.</p>');
+  L.push('<h2>Раздел 2</h2><p>Конкретика: цифры, факты.</p>');
+  L.push('<ul><li>Пункт</li><li>Пункт</li></ul>');
+  L.push('<h2>Раздел 3</h2><p>Текст.</p>');
+  L.push('<blockquote>Важная мысль.</blockquote>');
+  L.push('<h2>Итог и выводы</h2><p>Главный вывод.</p>');
+  L.push('<p><b>Вопрос к читателям:</b> [вовлекающий вопрос]</p>');
+  L.push('<p><i>Подписывайтесь — в следующей статье разберём [анонс].</i></p>');
+  L.push('');
+  L.push('ТРЕБОВАНИЯ: живой язык, короткие абзацы, конкретика, без канцелярита, без кликбейта.');
+  L.push('Верни ТОЛЬКО блоки и HTML, без пояснений и без markdown-обёрток.');
+  return L.join('\n');
+}
+
+function parseArticleResponse(r){
+  var description='', tags='', html=r;
+  var dm=r.match(/\[DESCRIPTION\]([\s\S]*?)\[\/DESCRIPTION\]/i);
+  var tm=r.match(/\[TAGS\]([\s\S]*?)\[\/TAGS\]/i);
+  if(dm) description=dm[1].trim();
+  if(tm) tags=tm[1].trim();
+  html=html.replace(/\[DESCRIPTION\][\s\S]*?\[\/DESCRIPTION\]/gi,'').replace(/\[TAGS\][\s\S]*?\[\/TAGS\]/gi,'').trim();
+  var h1=html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  var title=h1?h1[1].replace(/<[^>]+>/g,'').trim():'';
+  var md=html
+    .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi,'# $1\n\n')
+    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi,'## $1\n\n')
+    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi,'### $1\n\n')
+    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi,'- $1\n')
+    .replace(/<p[^>]*>([\s\S]*?)<\/p>/gi,'$1\n\n')
+    .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi,'> $1\n\n')
+    .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi,'**$1**')
+    .replace(/<i[^>]*>([\s\S]*?)<\/i>/gi,'*$1*')
+    .replace(/<br\s*\/?>/gi,'\n')
+    .replace(/<[^>]+>/g,'')
+    .replace(/\n{3,}/g,'\n\n').trim();
+  var plain=md.replace(/^#+\s+/gm,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^>\s*/gm,'').replace(/^- /gm,'').trim();
+  return {html:html,md:md,plain:plain,title:title,description:description,tags:tags};
+}
+
+function renderArticle(a){
+  currentArticle=a;
+  document.getElementById('articleTabs').style.display='flex';
+  document.getElementById('articleActions').style.display='flex';
+  document.getElementById('aiArticleResult').style.display='none';
+  var pv='<div class="article-preview">';
+  if(a.description) pv+='<div class="meta"><b>📝 Описание:</b> '+escapeHtml(a.description)+'</div>';
+  pv+=a.html;
+  if(a.tags) pv+='<div class="tags"><b>🏷 Теги:</b> '+escapeHtml(a.tags)+'</div>';
+  pv+='</div>';
+  document.getElementById('articlePreview').innerHTML=pv;
+  document.getElementById('articleHtmlCode').textContent=a.html;
+  document.getElementById('articleMdCode').textContent=a.md;
+  document.getElementById('articlePlainCode').textContent=a.plain;
+}
+
+function aiIdeas(){ if(!(data.settings.apiKey||data.settings.yandexApiKey)){toast('Нужен ключ');switchTab('settings');return;} setLoading('aiIdeasResult'); generateText('10 честных заголовков для Дзен. Ниша: '+document.getElementById('aiNiche').value+'. '+DZEN_RULES).then(function(r){renderIdeaList('aiIdeasResult',parseLines(r));}).catch(function(e){showError('aiIdeasResult',e);}); }
+function aiTitles(){ var t=document.getElementById('aiTitleTopic').value.trim(); if(!t){toast('Тема?');return;} setLoading('aiTitlesResult'); generateText('7 заголовков: '+t+'. '+DZEN_RULES).then(function(r){renderSimple('aiTitlesResult',r);}).catch(function(e){showError('aiTitlesResult',e);}); }
+function aiDesc(){ var t=document.getElementById('descTopic').value.trim(); if(!t){toast('Тема?');return;} setLoading('aiDescResult'); generateText('Анонс 2-3 предл: '+t+'. '+DZEN_RULES).then(function(r){renderSimple('aiDescResult',r);}).catch(function(e){showError('aiDescResult',e);}); }
+function aiTags(){ var t=document.getElementById('tagsTopic').value.trim(); if(!t){toast('Тема?');return;} setLoading('aiTagsResult'); generateText('10 хэштегов: '+t).then(function(r){renderSimple('aiTagsResult',r);}).catch(function(e){showError('aiTagsResult',e);}); }
+function aiCheck(){ var t=document.getElementById('aiCheckText').value.trim(); if(!t){toast('Текст?');return;} setLoading('aiCheckResult'); generateText('Проверь на правила Дзен: '+DZEN_RULES+'\nТекст: """'+t+'"""').then(function(r){renderSimple('aiCheckResult',r);}).catch(function(e){showError('aiCheckResult',e);}); }
+
+function aiArticle(){
+  if(!(data.settings.apiKey||data.settings.yandexApiKey)){toast('Нужен ключ');switchTab('settings');return;}
+  var ti=document.getElementById('artTitle').value.trim(), to=document.getElementById('artTopic').value.trim();
+  if(!ti&&!to){toast('Укажи заголовок или тему');return;}
+  setLoading('aiArticleResult','Пишу статью в формате Дзен...');
+  generateText(buildArticlePrompt(ti,to,document.getElementById('artVolume').value,document.getElementById('artTone').value))
+  .then(function(r){ renderArticle(parseArticleResponse(r)); toast('✅ Статья готова'); })
+  .catch(function(e){ showError('aiArticleResult',e); });
+}
+
+function aiArticleHuman(){
+  if(!(data.settings.apiKey||data.settings.yandexApiKey)){toast('Нужен ключ');switchTab('settings');return;}
+  var ti=document.getElementById('artTitle').value.trim(), to=document.getElementById('artTopic').value.trim();
+  if(!ti&&!to){toast('Укажи заголовок или тему');return;}
+  setLoading('aiArticleResult','1/2 пишу черновик...');
+  generateText(buildArticlePrompt(ti,to,document.getElementById('artVolume').value,document.getElementById('artTone').value))
+  .then(function(draft){
+    setLoading('aiArticleResult','2/2 очеловечиваю...');
+    return generateText('Перепиши статью живым языком, добавь личный опыт, убери канцелярит. Сохрани HTML-структуру (h1,h2,h3,p,ul,li,blockquote,b,i) и блоки [DESCRIPTION]/[TAGS]. Верни только результат:\n\n'+draft);
+  })
+  .then(function(r){ renderArticle(parseArticleResponse(r)); toast('✅ Написана и очеловечена'); })
+  .catch(function(e){ showError('aiArticleResult',e); });
+}
+
+function genImage(){
+  var t=document.getElementById('imgTopic').value.trim(); if(!t){toast('Тема?');return;}
+  var st=document.getElementById('imgStyle').value;
+  var styles={photo:'фотореалистичный стиль',illu:'цифровая иллюстрация',flat:'флэт-дизайн',vintage:'винтажный исторический стиль'};
+  var prompt='Создай яркую обложку. Тема: '+t+'. Стиль: '+styles[st]+'. Формат 16:9. Без текста и водяных знаков.';
+  setLoading('imgResult','Рисую через '+(data.settings.imageProvider||'pollinations')+'...');
+  generateImage(prompt).then(function(img){
+    lastImages['imgResult']='data:'+img.mime+';base64,'+img.data;
+    document.getElementById('imgResult').innerHTML='<img src="'+lastImages['imgResult']+'" style="max-width:100%;border-radius:12px;margin-top:12px"><div style="margin-top:10px"><button class="btn btn-sm" data-action="downloadImage" data-target="imgResult">⬇️ PNG</button></div>';
+    toast('✅ Картинка готова');
+  }).catch(function(e){ showError('imgResult',e); });
+}
+function genImageFromArticle(){ var t=currentArticle.title||document.getElementById('artTitle').value.trim()||document.getElementById('artTopic').value.trim(); if(!t){toast('Нет заголовка');return;} document.getElementById('imgTopic').value=t; switchTab('images'); genImage(); }
+function downloadImage(tg){ var s=lastImages[tg]; if(!s){toast('Нет');return;} var a=document.createElement('a'); a.href=s; a.download='zen-'+Date.now()+'.png'; document.body.appendChild(a); a.click(); a.remove(); }
+
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){toast('📋 Скопировано');}).catch(function(){fb(t);}); } else fb(t);
+}
+function fb(t){ var a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); try{document.execCommand('copy');toast('📋 Скопировано');}catch(e){} a.remove(); }
+function copyArticleHtml(){ if(!currentArticle.html){toast('Нет статьи');return;} copyText(currentArticle.html); toast('📋 HTML скопирован — вставляй в Дзен'); }
+function copyArticleMd(){ if(!currentArticle.md){toast('Нет статьи');return;} copyText(currentArticle.md); }
+function copyArticlePlain(){ if(!currentArticle.plain){toast('Нет статьи');return;} copyText(currentArticle.plain); }
+
+var aiPatterns=[{re:/в современном мире|важно отметить|является|осуществляется|в заключение|таким образом/i,msg:'Канцелярит'},{re:/безусловно|несомненно|очевидно/i,msg:'Усилители'}];
+var humanChecklistItems=['Личный опыт','Цифры/факты','Нет канцелярита','Эмоция','Разная длина предложений','Вопрос читателю','Личная деталь','Уникальность >90%'];
+function renderHumanChecklist(){ var el=document.getElementById('humanChecklist'); el.innerHTML=humanChecklistItems.map(function(it,i){ return '<div class="check-item"><input type="checkbox" id="hchk_'+i+'"><label for="hchk_'+i+'">'+it+'</label></div>'; }).join(''); el.querySelectorAll('input').forEach(function(cb){ cb.addEventListener('change',updateHumanProgress); }); }
+function updateHumanProgress(){ var t=humanChecklistItems.length, d=document.querySelectorAll('#humanChecklist input:checked').length; document.getElementById('humanProgress').style.width=(d/t*100)+'%'; }
+function analyzeHuman(){ var t=document.getElementById('humanText').value; if(!t.trim()){toast('Текст?');return;} var f=[]; aiPatterns.forEach(function(p){ if(new RegExp(p.re.source,'gi').test(t)) f.push(p.msg); }); var hp=/\bя\b|\bмы\b/i.test(t), hn=/\d/.test(t), hq=/\?/.test(t); document.getElementById('humanResult').innerHTML='<div class="result-box"><h3>🔍 Паттерны</h3>'+(f.length?f.map(function(x){return '<span class="badge badge-bad">'+x+'</span>';}).join(' '):'<span class="badge badge-ok">✅ Чисто</span>')+'<h3>📊 Метрики</h3><div>Местоимение: '+(hp?'<span class="badge badge-ok">Есть</span>':'<span class="badge badge-bad">Нет</span>')+'</div><div>Цифры: '+(hn?'<span class="badge badge-ok">Есть</span>':'<span class="badge badge-warn">Мало</span>')+'</div><div>Вопрос: '+(hq?'<span class="badge badge-ok">Есть</span>':'<span class="badge badge-warn">Нет</span>')+'</div></div>'; }
+function rewriteHuman(){ var t=document.getElementById('humanText').value; if(!t.trim()){toast('Текст?');return;} setLoading('humanResult','Очеловечиваю...'); generateText('Перепиши живо, добавь опыт, убери канцелярит: """'+t+'"""').then(function(r){renderSimple('humanResult',r);}).catch(function(e){showError('humanResult',e);}); }
+
+function saveSettings(){
+  data.settings.textProvider=document.getElementById('textProvider').value;
+  data.settings.apiKey=document.getElementById('apiKey').value.trim();
+  data.settings.model=document.getElementById('apiModel').value||'gemini-3.6-flash';
+  data.settings.yandexApiKey=document.getElementById('yandexApiKey').value.trim();
+  data.settings.yandexFolderId=document.getElementById('yandexFolderId').value.trim();
+  data.settings.yandexModel=document.getElementById('yandexModel').value;
+  data.settings.yandexArtModel=document.getElementById('yandexArtModel').value;
+  data.settings.imageProvider=document.getElementById('imageProvider').value;
+  data.settings.geminiImageModel=document.getElementById('geminiImageModel').value;
+  data.settings.hfToken=document.getElementById('hfToken').value.trim();
+  data.settings.hfModel=document.getElementById('hfModel').value;
+  save(); toast('Сохранено');
+}
+function testConnection(){
+  saveSettings();
+  if(!(data.settings.apiKey||data.settings.yandexApiKey)){toast('Введи ключ');return;}
+  var st=document.getElementById('connStatus'); st.innerHTML='<span class="badge badge-info">Проверяю...</span>';
+  generateText('Ответь одним словом: работает').then(function(r){ st.innerHTML='<span class="badge badge-ok">✅ '+escapeHtml(r)+'</span>'; }).catch(function(e){ st.innerHTML='<span class="badge badge-bad">❌ '+escapeHtml(e.message)+'</span>'; });
+}
+document.getElementById('textProvider').addEventListener('change',function(){ var v=this.value; document.getElementById('geminiTextSettings').style.display=v==='gemini'?'block':'none'; document.getElementById('yandexTextSettings').style.display=v==='yandex'?'block':'none'; });
+document.getElementById('imageProvider').addEventListener('change',function(){ var v=this.value; document.getElementById('geminiImageSettings').style.display=v==='gemini'?'block':'none'; document.getElementById('hfImageSettings').style.display=v==='huggingface'?'block':'none'; document.getElementById('pollinationsInfo').style.display=v==='pollinations'?'block':'none'; document.getElementById('yandexImageSettings').style.display=v==='yandex'?'block':'none'; });
+
+var ideaDB={cooking:{howto:['Готовим дома','Рецепт за 30 мин'],list:['7 ужинов','5 блюд из холодильника'],story:['Месяц готовил','Научился печь'],compare:['Дорогой vs дешёвый','Дом vs магазин'],mistakes:['5 ошибок','Тесто не поднимается']},home:{howto:['Ремонт сам','Утепление балкона'],list:['7 лайфхаков','5 ошибок покупки'],story:['Год после ремонта','Собрал мебель'],compare:['Краска дорогая vs дешёвая','Сам vs мастер'],mistakes:['5 ошибок ремонта','Переплатил']},garden:{howto:['Урожай раньше','Посадка по шагам'],list:['7 растений','5 ошибок дачника'],story:['Участок в сад','Борьба с вредителем'],compare:['Теплица vs парник','Грунт дорогой vs дешёвый'],mistakes:['4 ошибки новичка','Не плодоносит']},tech:{howto:['Настройка 15 мин','Ускорение гаджета'],list:['5 бесплатных программ','7 скрытых функций'],story:['Перешёл с А на Б','Восстановил данные'],compare:['Гаджет А vs Б','Бюджет vs флагман'],mistakes:['5 ошибок покупки','Тормозит']},finance:{howto:['Личный бюджет','Кэшбэк'],list:['5 привычек экономии','7 способов сократить'],story:['Год 10%','Выбрался из кредитки'],compare:['Вклад vs накопительный','Банк А vs Б'],mistakes:['5 фин.ошибок','Копилка пуста']},health:{howto:['Разминка 10 мин','Режим сна'],list:['5 привычек ЗОЖ','7 шагов к сну'],story:['Месяц в 6 утра','30 дней без сладкого'],compare:['Ходьба vs бег','Утро vs вечер'],mistakes:['4 ошибки сидячего','Не высыпался']},travel:{howto:['План поездки','Бюджетно'],list:['7 неочевидных мест','5 способов сэкономить'],story:['Поездка с цифрами','С детьми'],compare:['Место А vs Б','Сам vs тур'],mistakes:['Что пошло не так','5 ошибок первой поездки']},history:{howto:['Что если бы','Быт эпохи'],list:['7 мифов','5 фактов'],story:['Месяц изучал','Проверил миф'],compare:['Личность А vs Б','Эпоха А vs Б'],mistakes:['5 заблуждений','Учебник врёт']}};
+function genManualIdeas(){ var n=document.getElementById('mNiche').value, f=document.getElementById('mFormat').value; renderIdeaList('manualIdeasResult',(ideaDB[n]&&ideaDB[n][f])||['Нет']); }
+function addToBank(t){ if(!t||data.ideas.find(function(i){return i.title===t;}))return; data.ideas.push({title:t,date:new Date().toLocaleDateString('ru')}); save(); }
+function addIdeaManual(){ var i=document.getElementById('manualIdea'), v=i.value.trim(); if(v){addToBank(v);i.value='';toast('+');} }
+function renderIdeasBank(){ var el=document.getElementById('ideasBank'); if(!data.ideas.length){el.innerHTML='<p style="color:var(--muted)">Пусто</p>';return;} el.innerHTML=data.ideas.map(function(it,i){ return '<div class="plan-item"><div class="meta"><div class="title">'+escapeHtml(it.title)+'</div><div class="sub">'+it.date+'</div></div><div class="flex"><button class="btn btn-sm" data-action="ideaToPlan" data-index="'+i+'">📅</button><button class="btn btn-sm btn-danger" data-action="removeIdea" data-index="'+i+'">✕</button></div></div>'; }).join(''); }
+
+function addPlan(){ var t=document.getElementById('planTitle').value.trim(); if(!t){toast('Заголовок?');return;} data.plan.push({title:t,date:document.getElementById('planDate').value||'—',format:document.getElementById('planFormat').value,status:document.getElementById('planStatus').value}); document.getElementById('planTitle').value=''; save(); toast('+'); }
+function renderPlan(){ var el=document.getElementById('planList'); if(!data.plan.length){el.innerHTML='<p style="color:var(--muted)">Пусто</p>';return;} el.innerHTML=data.plan.map(function(p,i){ return '<div class="plan-item"><div class="meta"><div class="title">'+escapeHtml(p.title)+'</div><div class="sub">📅 '+escapeHtml(p.date)+' · '+escapeHtml(p.format)+'</div></div><div class="flex"><select data-plan-status data-index="'+i+'" style="margin:0;width:auto;padding:6px"><option value="idea"'+(p.status==='idea'?' selected':'')+'>Идея</option><option value="work"'+(p.status==='work'?' selected':'')+'>В работе</option><option value="done"'+(p.status==='done'?' selected':'')+'>Готово</option></select><button class="btn btn-sm btn-danger" data-action="removePlan" data-index="'+i+'">✕</button></div></div>'; }).join(''); }
+
+var checklist=[{cat:'Заголовок',items:['Честный','Без шок','До 70 зн']},{cat:'Контент',items:['Уникальный','Личный опыт','Короткие абзацы']},{cat:'Оформление',items:['3+ фото','Обложка по теме']},{cat:'Правила',items:['Без 18+','Без агрессии','Финал-вопрос']}];
+function renderChecklist(){ var el=document.getElementById('checkList'); var h=''; checklist.forEach(function(c,ci){ h+='<h3>'+c.cat+'</h3>'; c.items.forEach(function(it,ii){ var k=ci+'_'+ii; h+='<div class="check-item"><input type="checkbox" id="chk_'+k+'"'+(data.checkState[k]?' checked':'')+'><label for="chk_'+k+'">'+it+'</label></div>'; }); }); el.innerHTML=h; el.querySelectorAll('input').forEach(function(cb){ cb.addEventListener('change',function(){ data.checkState[this.id.replace('chk_','')]=this.checked; updateProgress(); save(); }); }); updateProgress(); }
+function updateProgress(){ var t=checklist.reduce(function(s,c){return s+c.items.length;},0), d=Object.values(data.checkState).filter(function(v){return v;}).length; document.getElementById('checkProgress').style.width=(d/t*100)+'%'; }
+function resetChecks(){ data.checkState={}; renderChecklist(); save(); }
+function saveCheck(){ var n=document.getElementById('checkName').value.trim()||'Без названия', t=checklist.reduce(function(s,c){return s+c.items.length;},0), d=Object.values(data.checkState).filter(function(v){return v;}).length; if(d<t){toast(d+'/'+t);return;} data.checks.push({name:n,date:new Date().toLocaleDateString('ru')}); data.checkState={}; renderChecklist(); save(); toast('✅'); }
+function scanText(){ var t=document.getElementById('textScan').value; if(!t.trim())return; var f=[]; [{re:/шок|не поверите|врачи скрывают|100% способ|гарантированный доход/i,msg:'Кликбейт/гарантии'}].forEach(function(s){ if(s.re.test(t)) f.push(s.msg); }); document.getElementById('scanResult').innerHTML=f.length?'<div class="result-box"><span class="badge badge-bad">'+f.join(', ')+'</span></div>':'<div class="result-box"><span class="badge badge-ok">✅ Чисто</span></div>'; }
+
+function buildStructure(){ var t=document.getElementById('bTitle').value.trim(), to=document.getElementById('bTopic').value.trim()||'тема'; var r=[]; var tt=t||'Введи'; if(tt.length<15)r.push({type:'warn',msg:'Короткий'}); [{re:/шок|не поверите|\.\.\.|[А-ЯЁ]{4,}/i,msg:'Кликбейт'},{re:/^.{70,}$/,msg:'>70'}].forEach(function(p){ if(p.re.test(tt)) r.push({type:'bad',msg:p.msg}); }); if(!r.length)r.push({type:'ok',msg:'OK'}); document.getElementById('titleCheck').innerHTML=r.map(function(x){return '<span class="badge badge-'+x.type+'">'+x.msg+'</span>';}).join(' '); document.getElementById('structureResult').innerHTML='<div class="result-box">📌 '+escapeHtml(t||'(введи)')+'\nТема: '+escapeHtml(to)+'\n\n1️⃣ Крючок\n2️⃣ Контекст\n3️⃣ 3-5 блоков\n4️⃣ Цифры\n5️⃣ Итог\n6️⃣ Вопрос</div>'; }
+
+var templates=['ИНСТРУКЦИЯ\n🪝 Крючок\n📦 Понадобится\n📝 Шаги\n⚠️ Ошибки\n✅ Итог\n💬 Вопрос','ПОДБОРКА\nВведение\n1-5 пунктов\n📊 Сравнение\nВывод','ОПЫТ\n📖 Ситуация\n🤔 Пробовал\n💡 Решение\n📊 Результат\n💬 Вопрос','РАЗБОР\nЧто разбираю\n✅ Плюсы\n❌ Минусы\n⚖️ Сравнение\n🎯 Итог'];
+
+function switchTab(n){ document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active',x.dataset.tab===n); }); document.querySelectorAll('.section').forEach(function(x){ x.classList.toggle('active',x.id===n); }); }
+
+document.addEventListener('click',function(e){
+  var tab=e.target.closest('[data-tab]'); if(tab){ switchTab(tab.dataset.tab); return; }
+  var st=e.target.closest('.source-tab');
+  if(st){
+    document.querySelectorAll('.source-tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.source-content').forEach(function(x){x.classList.remove('active');});
+    st.classList.add('active');
+    var map={preview:'articlePreview',html:'articleHtml',md:'articleMd',plain:'articlePlain'};
+    document.getElementById(map[st.dataset.source]).classList.add('active');
+    return;
+  }
+  var el=e.target.closest('[data-action]'); if(!el) return;
+  var a=el.dataset.action, idx=parseInt(el.dataset.index,10);
+  if(a==='saveSettings') saveSettings();
+  else if(a==='testConnection') testConnection();
+  else if(a==='genManualIdeas') genManualIdeas();
+  else if(a==='addIdeaManual') addIdeaManual();
+  else if(a==='bankGenerated'){ addToBank(tempGenerated[el.dataset.list][idx]); toast('+'); }
+  else if(a==='removeIdea'){ data.ideas.splice(idx,1); save(); }
+  else if(a==='ideaToPlan'){ document.getElementById('planTitle').value=data.ideas[idx].title; switchTab('plan'); }
+  else if(a==='aiIdeas') aiIdeas();
+  else if(a==='aiTitles') aiTitles();
+  else if(a==='aiArticle') aiArticle();
+  else if(a==='aiArticleHuman') aiArticleHuman();
+  else if(a==='aiDesc') aiDesc();
+  else if(a==='aiTags') aiTags();
+  else if(a==='aiCheck') aiCheck();
+  else if(a==='genImage') genImage();
+  else if(a==='genImageFromArticle') genImageFromArticle();
+  else if(a==='downloadImage') downloadImage(el.dataset.target);
+  else if(a==='copyArticleHtml') copyArticleHtml();
+  else if(a==='copyArticleMd') copyArticleMd();
+  else if(a==='copyArticlePlain') copyArticlePlain();
+  else if(a==='analyzeHuman') analyzeHuman();
+  else if(a==='rewriteHuman') rewriteHuman();
+  else if(a==='buildStructure') buildStructure();
+  else if(a==='saveCheck') saveCheck();
+  else if(a==='resetChecks') resetChecks();
+  else if(a==='scanText') scanText();
+  else if(a==='addPlan') addPlan();
+  else if(a==='removePlan'){ data.plan.splice(idx,1); save(); }
+  else if(a==='copyTemplate') copyText(templates[idx]);
+});
+document.addEventListener('change',function(e){ if(e.target.matches('[data-plan-status]')){ data.plan[parseInt(e.target.dataset.index,10)].status=e.target.value; save(); } });
+
+function renderAll(){
+  document.getElementById('statIdeas').textContent=data.ideas.length;
+  document.getElementById('statPlan').textContent=data.plan.length;
+  document.getElementById('statDone').textContent=data.plan.filter(function(p){return p.status==='done';}).length;
+  document.getElementById('statChecks').textContent=data.checks.length;
+  renderIdeasBank(); renderPlan();
+  var hasKey=data.settings.apiKey||data.settings.yandexApiKey;
+  document.getElementById('keyBanner').innerHTML=hasKey?'':'<div class="tip danger-tip">⚠️ API ключ не задан. Для текста нужен Yandex или Gemini. Для картинок — Pollinations работает без ключа.</div>';
+  var tp=document.getElementById('textProvider'); if(tp){ tp.value=data.settings.textProvider||'gemini'; tp.dispatchEvent(new Event('change')); }
+  var ip=document.getElementById('imageProvider'); if(ip){ ip.value=data.settings.imageProvider||'pollinations'; ip.dispatchEvent(new Event('change')); }
+  var els={apiKey:data.settings.apiKey||'',apiModel:data.settings.model||'gemini-3.6-flash',yandexApiKey:data.settings.yandexApiKey||'',yandexFolderId:data.settings.yandexFolderId||'',yandexModel:data.settings.yandexModel||'yandexgpt/latest',yandexArtModel:data.settings.yandexArtModel||'yandex-art/latest',geminiImageModel:data.settings.geminiImageModel||'gemini-3.1-flash-image',hfToken:data.settings.hfToken||'',hfModel:data.settings.hfModel||'ai-forever/Kandinsky-3.1'};
+  for(var id in els){ var el=document.getElementById(id); if(el) el.value=els[id]; }
+}
+window.addEventListener('DOMContentLoaded',function(){ document.getElementById('loading-screen').classList.add('hidden'); });
+setTimeout(function(){ var ls=document.getElementById('loading-screen'); if(ls&&!ls.classList.contains('hidden')) ls.innerHTML='❌ Откройте через HTTP (не file://)'; },3000);
+renderChecklist(); renderHumanChecklist(); renderAll();
+</script>
+</body>
+</html>        <option value="qwen-plus"> Qwen Plus (анализ)</option>
       </optgroup>
     </select>
     <div class="tip" style="font-size:.8rem">Alice AI — для сложных чат-сценариев, YandexGPT Pro — для качества статей, DeepSeek — для логики и фактчекинга, Qwen — для анализа.</div>
